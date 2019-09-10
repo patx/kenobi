@@ -1,16 +1,9 @@
-KenobiDB
-````````
-
-KenobiDB is lightweight, document based database using Python's own
-json module. And it's BSD licensed!
-
-
-KenobiDB is Fun
-```````````````
+kenobiDB is simple document based database
+``````````````````````````````````````````
 
 ::
 
-    >>> from kenobi import KenobiDB()
+    >>> from kenobi import KenobiDB
 
     >>> db = KenobiDB('database.json', auto_save=False)
 
@@ -28,14 +21,5 @@ KenobiDB is Fun
     >>> db.find_all('groups', ['admin', 'user'])
     [{'name': 'user2', 'groups': ['admin', 'user']}]
 
-    >>>> db.save()
+    >>>> db.save_db()
     True
-
-
-And Easy to Install
-```````````````````
-
-::
-
-    $ pip install kenobi
-
