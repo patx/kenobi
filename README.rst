@@ -21,5 +21,5 @@ kenobiDB is simple document based database
     >>> db.find_all('groups', ['admin', 'user'])
     [{'name': 'user2', 'groups': ['admin', 'user']}]
 
-    >>>> db.save_db()
+    >>> db.save_db()
     True
