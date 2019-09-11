@@ -86,7 +86,7 @@ class KenobiDB(object):
         for document in self.db:
             if (key, value) in document.items():
                 result.append(document)
-                del self.db.document[key]
+                self.db.remove(document)
         if self.auto_save:
             self.save_db()
         return result

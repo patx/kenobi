@@ -13,7 +13,7 @@ kenobiDB is simple document based database
     >>> db.insert({'name': 'user2', 'groups': ['admin', 'user']})
     >>> db.insert({'name': 'user3', 'groups': ['sudo', 'user']})
 
-    >>> db.search('name1', 'user1')
+    >>> db.search('name', 'user1')
     [{'name': 'user1', 'groups': ['user']}]
 
     >>> db.find_any('groups', ['admin', 'sudo'])
