@@ -1,27 +1,9 @@
 """
 
-::
-
-    >>> from kenobi import KenobiDB
-
-    >>> db = KenobiDB('database.json', auto_save=False)
-
-    >>> db.insert({'name': 'user1', 'groups': ['user']})
-    >>> db.insert({'name': 'user2', 'groups': ['admin', 'user']})
-    >>> db.insert({'name': 'user3', 'groups': ['sudo', 'user']})
-
-    >>> db.search('name', 'user1')
-    [{'name': 'user1', 'groups': ['user']}]
-
-    >>> db.find_any('groups', ['admin', 'sudo'])
-    [{'name': 'user2', 'groups': ['admin', 'user']},
-     {'name': 'user3', 'groups': ['sudo', 'user']}]
-
-    >>> db.find_all('groups', ['admin', 'user'])
-    [{'name': 'user2', 'groups': ['admin', 'user']}]
-
-    >>> db.save_db()
-    True
+KenobiDB is a stupid and small document based DB, supporting very simple
+usage including insertion, removal and basic search. It useses pickle.
+Written by Harrison Erd (https://patx.github.io/)
+https://patx.github.io/kenobi/
 
 
 """
@@ -29,7 +11,7 @@
 from distutils.core import setup
 
 setup(name="kenobi",
-    version="1.1",
+    version="1.2",
     description="A simple database using pickle.",
     long_description=__doc__,
     author="Harrison Erd",
