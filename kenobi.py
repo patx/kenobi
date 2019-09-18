@@ -58,12 +58,12 @@ class KenobiDB(object):
     # Utility functions
 
     def save_db(self):
-        """Save the database to a file, return True."""
+        """Force dump the database to a file, return True."""
         pickle.dump(self.db, open(self.file, 'wb'))
         return True
 
     def _autosave(self):
-        """Force dump the database into the file."""
+        """Save database to file if auto_save=True"""
         if self.auto_save:
             self.save_db()
 
