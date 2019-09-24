@@ -5,7 +5,7 @@ kenobiDB is simple document based database
 
     >>> from kenobi import KenobiDB
 
-    >>> db = KenobiDB('database.json', auto_save=False)
+    >>> db = KenobiDB('example.pkl', auto_save=False)
 
     >>> db.insert({'name': 'user1', 'groups': ['user']})
     >>> db.insert({'name': 'user2', 'groups': ['admin', 'user']})
