@@ -87,6 +87,20 @@ class KenobiDB(object):
         self._autosave()
         return result
 
+    def update(self, id_key, id_value, new_dict):
+        """Update a document, takes three arguments,
+        one key and one value to find which document to update,
+        and a dict which contains the key/value pair to be updated/
+        inserted.
+ 
+        Example: 
+        update('name', 'user1', {'groups': ['user', 'admin', 'sudo']})
+        """
+        result = self. search(id_key, id_value)
+        for each in result:
+            each.update(new_dict)
+        return True
+
     def purge(self):
         """Remove all documents from the database, return True."""
         self.db = []
