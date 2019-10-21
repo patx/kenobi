@@ -8,8 +8,11 @@ kenobiDB is simple document based database
     >>> db = KenobiDB('example.pkl', auto_save=False)
     
     >>> db.insert({'name': 'user1', 'groups': ['user']})
+    True
     >>> db.insert({'name': 'user2', 'groups': ['admin', 'user']})
+    True
     >>> db.insert({'name': 'user3', 'groups': ['sudo', 'user']})
+    True
     
     >>> db.all()
     [ {'name': 'user1', 'groups': ['user']},
