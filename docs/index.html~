@@ -8,7 +8,7 @@ body { margin-right: 50%; }
 <body>
 <h1>kenobiDB<img src="https://vignette.wikia.nocookie.net/lego/images/d/d7/Obi_Wan_episode_1_%282014%29.jpg/revision/latest/scale-to-width-down/300?cb=20150216014608" width="80" height="50"></h1>
 A stupid and <strong>small document based database</strong>, supporting very simple 
-usage including insertion, update, removal and basic search, <strong>kenobiDB</strong> useses the pickle 
+usage including insertion, removal and basic search, <strong>kenobiDB</strong> useses the pickle 
 module built into the python standard library. Check out the source code on <a href="http://github.com/patx/kenobi">
 github/patx/kenobi</a> or view the project on <a href="https://pypi.org/project/kenobi/">pypi</a>
 <h2>Use it</h2>
@@ -25,11 +25,6 @@ View documentation using <a href="https://docs.python.org/3/library/pydoc.html">
 >>> db.insert({'name': 'user2', 'groups': ['admin', 'user']})
 >>> db.insert({'name': 'user3', 'groups': ['sudo', 'user']})
 
->>> db.all()
-[ {'name': 'user1', 'groups': ['user']},
-  {'name': 'user2', 'groups': ['admin', 'user']},
-  {'name': 'user3', 'groups': ['sudo', 'user']} ]
-
 >>> db.search('name', 'user1')
 [{'name': 'user1', 'groups': ['user']}]
 
@@ -39,14 +34,6 @@ View documentation using <a href="https://docs.python.org/3/library/pydoc.html">
 
 >>> db.find_all('groups', ['admin', 'user'])
 [{'name': 'user2', 'groups': ['admin', 'user']}]
-
->>> db.update('name', 'user', {'groups': ['user', sudo', 'admin']})
-True
-
->>> db.all()
-[ {'name': 'user1', 'groups': ['user', 'sudo', 'admin']},
-  {'name': 'user2', 'groups': ['admin', 'user']},
-  {'name': 'user3', 'groups': ['sudo', 'user']} ]
 
 >>> db.save_db()
 True
