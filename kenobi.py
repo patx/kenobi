@@ -70,7 +70,10 @@ class KenobiDB(object):
     # Add/delete functions
 
     def insert(self, document):
-        """Add a document (a python dict) to the database and return True."""
+        """Add a document (a python dict) to the database and return True.
+        Example:
+            insert({'name': 'user1', 'groups': ['user', 'sudo']})
+        """
         self.db.append(document)
         self._autosave()
         return True
@@ -78,6 +81,8 @@ class KenobiDB(object):
     def remove(self, key, value):
         """Remove a document with the matching key: value pair as key
         and value args given, return document(s) that were removed.
+        Example:
+            remove('name', 'user1')
         """
         result = []
         for document in self.db:
@@ -92,9 +97,8 @@ class KenobiDB(object):
         one key and one value to find which document to update,
         and a dict which contains the key/value pair to be updated/
         inserted.
- 
         Example: 
-        update('name', 'user1', {'groups': ['user', 'admin', 'sudo']})
+            update('name', 'user1', {'groups': ['user', 'admin', 'sudo']})
         """
         result = self. search(id_key, id_value)
         for each in result:
@@ -102,7 +106,10 @@ class KenobiDB(object):
         return True
 
     def purge(self):
-        """Remove all documents from the database, return True."""
+        """Remove all documents from the database, return True.
+        Example:
+            purge()
+        """
         self.db = []
         self._autosave()
         return True
@@ -110,12 +117,17 @@ class KenobiDB(object):
     # Search functions
 
     def all(self):
-        """Return a list of all documents in the database."""
+        """Return a list of all documents in the database.
+        Example:
+            all()
+        """
         return self.db
 
     def search(self, key, value):
         """Return a list of documents with key: value pairs matching the
         given key and value args given.
+        Example:
+            search('name', 'user1')
         """
         result = []
         for document in self.db:
@@ -123,21 +135,11 @@ class KenobiDB(object):
                 result.append(document)
         return result
 
-    def find_all(self, key, value):
-        """For use with a value that is a list. Return a list of documents
-        with keys including at least one match from the list value.
-        """
-        result = []
-        for document in self.db:
-            if key in document.keys():
-                doc_list = document[key]
-                if all(elem in doc_list for elem in value):
-                    result.append(document)
-        return result
-
     def find_any(self, key, value):
         """For use with a value that is a list. Return a list of documents 
         with keys including all matches from the list value.
+        Example:
+            find_any('groups', ['admin', 'sudo'])
         """
         result = []
         for document in self.db:
@@ -147,4 +149,17 @@ class KenobiDB(object):
                     result.append(document)
         return result
 
+    def find_all(self, key, value):
+        """For use with a value that is a list. Return a list of documents
+        with keys including at least one match from the list value.
+        Example:
+            find_all('groups', ['admin', 'user'])
+        """
+        result = []
+        for document in self.db:
+            if key in document.keys():
+                doc_list = document[key]
+                if all(elem in doc_list for elem in value):
+                    result.append(document)
+        return result
 
