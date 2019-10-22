@@ -100,9 +100,12 @@ class KenobiDB(object):
         Example: 
             update('name', 'user1', {'groups': ['user', 'admin', 'sudo']})
         """
-        result = self. search(id_key, id_value)
-        for each in result:
-            each.update(new_dict)
+        for document in self.db:
+            if (id_key, id_value) in document.items():
+                self.db.remove(document)
+                document.update(new_dict)
+                self.insert(document)
+        self._autosave()
         return True
 
     def purge(self):
