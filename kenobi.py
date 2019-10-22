@@ -39,7 +39,6 @@
 import pickle
 import os
 
-
 class KenobiDB(object):
 
     def __init__(self, file, auto_save=False):

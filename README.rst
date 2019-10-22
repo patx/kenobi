@@ -15,9 +15,9 @@ kenobiDB is simple document based database
     True
     
     >>> db.all()
-    [ {'name': 'user1', 'groups': ['user']},
-      {'name': 'user2', 'groups': ['admin', 'user']},
-      {'name': 'user3', 'groups': ['sudo', 'user']} ]
+    [{'name': 'user1', 'groups': ['user']},
+     {'name': 'user2', 'groups': ['admin', 'user']},
+     {'name': 'user3', 'groups': ['sudo', 'user']}]
     
     >>> db.search('name', 'user1')
     [{'name': 'user1', 'groups': ['user']}]
@@ -33,9 +33,9 @@ kenobiDB is simple document based database
     True
     
     >>> db.all()
-    [ {'name': 'user1', 'groups': ['user', 'sudo', 'admin']},
-      {'name': 'user2', 'groups': ['admin', 'user']},
-      {'name': 'user3', 'groups': ['sudo', 'user']} ]
+    [{'name': 'user1', 'groups': ['user', 'sudo', 'admin']},
+     {'name': 'user2', 'groups': ['admin', 'user']},
+     {'name': 'user3', 'groups': ['sudo', 'user']}]
     
     >>> db.save_db()
     True

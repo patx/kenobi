@@ -10,7 +10,7 @@ Website: https://patx.github.io/kenobi/
 from distutils.core import setup
 
 setup(name="kenobi",
-    version="1.2.2",
+    version="1.3",
     description="document based database using pickle",
     long_description=__doc__,
     author="Harrison Erd",
