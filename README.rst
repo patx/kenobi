@@ -29,7 +29,7 @@ kenobiDB is simple document based database
     >>> db.find_all('groups', ['admin', 'user'])
     [{'name': 'user2', 'groups': ['admin', 'user']}]
     
-    >>> db.update('name', 'user', {'groups': ['user', sudo', 'admin']})
+    >>> db.update('name', 'user1', {'groups': ['user', sudo', 'admin']})
     True
     
     >>> db.all()
