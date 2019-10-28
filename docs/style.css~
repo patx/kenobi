@@ -865,13 +865,6 @@ select:focus {
   font-size: .77rem;
 }
 
-.section__lead__example {
-  margin: 0;
-  font-size: .77rem;
-  font-family:monospace;
-}
-
-
 .section--dark {
   color: #fff;
 }

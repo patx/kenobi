@@ -73,17 +73,18 @@ View documentation using <a href="https://docs.python.org/3/library/pydoc.html">
 <div class="section__container">
 <div class="section__header">
 <h2 class="section__title">See it in action</h2>
-<p class="section__lead__example">
+<p class="section__lead">
+<pre>
 >>> from kenobi import KenobiDB
-<br><br>
->>> db = KenobiDB('example.pkl', auto_save=True)
-<br><br>
->>> db.insert({'name': 'user1', 'groups': ['admin', 'user']})<br>
-True
-<br><br>
->>> db.search('name', 'user1')<br>
-[{'name': 'user1', 'groups': ['admin', 'user']}]
 
+>>> db = KenobiDB('example.pkl', auto_save=True)
+
+>>> db.insert({'name': 'user1', 'groups': ['admin', 'user']})
+True
+
+>>> db.search('name', 'user1')
+[{'name': 'user1', 'groups': ['admin', 'user']}]
+</pre>
 </p>
 </div>
 <div class="section__body">
