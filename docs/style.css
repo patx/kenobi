@@ -597,7 +597,7 @@ img {
 pre {
   display: block;
   margin: 1rem 0;
-  font-size: .66rem;
+  font-size: 14px;
   font-family: Consolas, "Liberation Mono", Menlo, Courier, monospace;
   line-height: 1.6;
   text-align: left;
