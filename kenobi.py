@@ -62,7 +62,7 @@ class KenobiDB(object):
         return True
 
     def _autosave(self):
-        """Save database to file if auto_save=True"""
+        """Save database to file if auto_save=True."""
         if self.auto_save:
             self.save_db()
 
