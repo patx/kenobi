@@ -36,8 +36,10 @@
 # OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, 
 # EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-import pickle
-import os
+
+import pickle  # Import pickle for object serilization
+import os  # Import os for file manipulation
+
 
 class KenobiDB(object):
 
@@ -54,6 +56,7 @@ class KenobiDB(object):
         else:
             self.db = []
 
+
     # Utility functions
 
     def save_db(self):
@@ -65,6 +68,7 @@ class KenobiDB(object):
         """Save database to file if auto_save=True."""
         if self.auto_save:
             self.save_db()
+
 
     # Add/delete functions
 
@@ -115,6 +119,7 @@ class KenobiDB(object):
         self.db = []
         self._autosave()
         return True
+
 
     # Search functions
 
