@@ -55,6 +55,7 @@ class KenobiDB(object):
             self.db = pickle.load(open(self.file, 'rb'))
         else:
             self.db = []
+            self.save_db()
 
 
     # Utility functions
