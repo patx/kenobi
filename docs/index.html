@@ -10,23 +10,23 @@ h1 { font-size: 50px; }
 </head>
 <body>
 <h1>kenobiDB<img src="https://vignette.wikia.nocookie.net/lego/images/d/d7/Obi_Wan_episode_1_%282014%29.jpg/revision/latest/scale-to-width-down/300?cb=20150216014608" width="80" height="50"></h1>
-A stupid and <strong>small document based database</strong>, supporting very simple 
-usage including insertion, update, removal and search, <strong>kenobiDB</strong> useses the pickle 
-module built into the Python standard library. Check out the source code on <a href="http://github.com/patx/kenobi">
+<strong>kenobiDB</strong> is a <strong>small document based database</strong> supporting very simple 
+usage including insertion, update, removal and search. It useses <a href="http://pyyaml.org/">YAML</a>. 
+Check out the source code on <a href="http://github.com/patx/kenobi">
 GitHub</a> or view the project on the <a href="https://pypi.org/project/kenobi/">Python Package Index</a>.
 <h2>Use it</h2>
 You can install kenobiDB using the <a href="https://pip.pypa.io/en/stable/">pip</a> command
 <br>
-<strong style="font-family: 'Ubuntu Mono', monospace">pip install kenobi</strong>
+<strong style="font-family: 'Ubuntu Mono', monospace">pip install pyyaml kenobi</strong>
 <br><br>
 View documentation using <a href="https://docs.python.org/3/library/pydoc.html">pydoc</a>
 <br>
-<strong style="font-family: 'Ubuntu Mono', monospace">pydoc kenobi</strong>
+<strong style="font-family: 'Ubuntu Mono', monospace">kenobi</strong>
 <h2>See it in action</h2>
 <pre>
 >>> from kenobi import KenobiDB
 
->>> db = KenobiDB('example.pkl', auto_save=True)
+>>> db = KenobiDB('example.yaml', auto_save=True)
 
 >>> db.insert({'name': 'user1', 'groups': ['admin', 'user']})
 True

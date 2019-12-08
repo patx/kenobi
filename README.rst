@@ -5,13 +5,13 @@ kenobiDB is simple document based database
 
     >>> from kenobi import KenobiDB
     
-    >>> db = KenobiDB('example.pkl', auto_save=False)
+    >>> db = KenobiDB('example.yaml', auto_save=False)
     
     >>> db.insert({'name': 'user1', 'groups': ['user']})
     True
-    >>> db.insert({'name': 'user2', 'groups': ['admin', 'user']})
-    True
-    >>> db.insert({'name': 'user3', 'groups': ['sudo', 'user']})
+    
+    >>> db.insert_many({'name': 'user2', 'groups': ['admin', 'user']},
+    {'name': 'user3', 'groups': ['sudo', 'user']})
     True
     
     >>> db.all()

@@ -2,8 +2,8 @@
 # -*- coding: utf-8 -*-
 
 """
-    KenobiDB is a stupid and small document based DB, supporting very simple
-    usage including insertion, removal and basic search. It useses pickle.
+    KenobiDB is a small document based DB, supporting very simple
+    usage including insertion, removal and basic search. Made with YAML.
     Written by Harrison Erd (https://patx.github.io/)
     https://patx.github.io/kenobi/
 """
@@ -37,32 +37,40 @@
 # EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 
-import pickle  # Import pickle for object serilization
-import os  # Import os for file manipulation
+import yaml
+import os
 
 
 class KenobiDB(object):
 
     def __init__(self, file, auto_save=False):
-        """Creates a database object and loads the data from the location path.
-        If the file does not exist it will be created. Also allows you to set
-        auto_save to True or False (default=False). If auto_save is set to
-        True the database is written to file after all changes.
+        """Creates a database object and loads the data from the location
+        path. If the file does not exist it will be created. Also allows
+        you to set auto_save to True or False (default=False). If auto_save
+        is set to True the database is written to file after every change.
         """
         self.file = os.path.expanduser(file)
         self.auto_save = auto_save
         if os.path.exists(self.file):
-            self.db = pickle.load(open(self.file, 'rb'))
+            read_file = open(self.file, 'r')
+            if os.stat(self.file).st_size == 0:
+                self.db = []
+            else:
+                self.db = yaml.load(read_file)
+            read_file.close()
         else:
             self.db = []
             self.save_db()
+        print(self.db)
 
 
     # Utility functions
 
     def save_db(self):
         """Force dump the database to a file, return True."""
-        pickle.dump(self.db, open(self.file, 'wb'))
+        save_file = open(self.file, 'w')
+        yaml.dump(self.db, save_file)
+        save_file.close()
         return True
 
     def _autosave(self):
@@ -79,6 +87,16 @@ class KenobiDB(object):
             insert({'name': 'user1', 'groups': ['user', 'sudo']})
         """
         self.db.append(document)
+        self._autosave()
+        return True
+
+    def insert_many(self, document_list):
+        """Add a list of documents to the database and return True.
+        Example:
+            insert_many([{1: 2, 8: 9}, {1: "key"}])
+        """
+        for document in document_list:
+            self.db.append(document)
         self._autosave()
         return True
 
