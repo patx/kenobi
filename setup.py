@@ -1,10 +1,9 @@
 
 """
-KenobiDB is a stupid and small document based DB, supporting very simple
-usage including insertion, removal and basic search. It useses YAML.
+KenobiDB is a small document based DB, supporting very simple
+usage including insertion, removal and basic search. Made with YAML.
 Written by Harrison Erd (https://patx.github.io/)
 Website: https://patx.github.io/kenobi/
-
 """
 
 from distutils.core import setup

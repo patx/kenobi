@@ -52,12 +52,13 @@ class KenobiDB(object):
         self.file = os.path.expanduser(file)
         self.auto_save = auto_save
         if os.path.exists(self.file):
-            read_file = open(self.file, 'r')
             if os.stat(self.file).st_size == 0:
                 self.db = []
+                self.save_db()
             else:
+                read_file = open(self.file, 'r')
                 self.db = yaml.load(read_file)
-            read_file.close()
+                read_file.close()
         else:
             self.db = []
             self.save_db()
@@ -92,7 +93,7 @@ class KenobiDB(object):
     def insert_many(self, document_list):
         """Add a list of documents to the database and return True.
         Example:
-            insert_many([{1: 2, 8: 9}, {1: "key"}])
+            insert_many([{1: 2, 8: 9}, {1: "value"}])
         """
         for document in document_list:
             self.db.append(document)

@@ -39,3 +39,16 @@ kenobiDB is simple document based database
     
     >>> db.save_db()
     True
+    
+    >>> db.remove('name', 'user1')
+    [{'name': 'user1', 'groups': ['user', 'sudo', 'admin']}]
+    
+    >>> db.all()
+    [{'name': 'user2', 'groups': ['admin', 'user']},
+     {'name': 'user3', 'groups': ['sudo', 'user']}]
+    
+    >>> db.purge()
+    True
+    
+    >>> db.all()
+    []
