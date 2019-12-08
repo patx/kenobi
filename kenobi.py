@@ -61,7 +61,6 @@ class KenobiDB(object):
         else:
             self.db = []
             self.save_db()
-        print(self.db)
 
 
     # Utility functions
