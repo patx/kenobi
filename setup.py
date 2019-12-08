@@ -23,5 +23,5 @@ setup(name="kenobi",
         "Intended Audience :: Developers",
         "Topic :: Database"],
     py_modules=['kenobi'],
-    install_requires=["pyyaml>=5.2"],)
+    install_requires=["pyyaml>=5.2",],)
 
