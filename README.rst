@@ -10,8 +10,8 @@ kenobiDB is simple document based database
     >>> db.insert({'name': 'user1', 'groups': ['user']})
     True
     
-    >>> db.insert_many({'name': 'user2', 'groups': ['admin', 'user']},
-    {'name': 'user3', 'groups': ['sudo', 'user']})
+    >>> db.insert_many([{'name': 'user2', 'groups': ['admin', 'user']},
+    {'name': 'user3', 'groups': ['sudo', 'user']}])
     True
     
     >>> db.all()
