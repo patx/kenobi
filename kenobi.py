@@ -54,14 +54,14 @@ class KenobiDB(object):
         if os.path.exists(self.file):
             if os.stat(self.file).st_size == 0:
                 self.db = []
-                self.save_db()
+                self._autosave()
             else:
                 read_file = open(self.file, 'r')
                 self.db = yaml.load(read_file)
                 read_file.close()
         else:
             self.db = []
-            self.save_db()
+            self._autosave()
 
 
     # Utility functions
