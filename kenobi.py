@@ -93,7 +93,7 @@ class KenobiDB(object):
     def insert_many(self, document_list):
         """Add a list of documents to the database and return True.
         Example:
-            insert_many([{1: 2, 8: 9}, {1: "value"}])
+            insert_many([{1: 2, 8: 9}, {1: 'value'}])
         """
         for document in document_list:
             self.db.append(document)

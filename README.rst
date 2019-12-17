@@ -3,6 +3,8 @@ kenobiDB is simple document based database
 
 ::
 
+    >>> # Exploratory Tests
+
     >>> from kenobi import KenobiDB
     
     >>> db = KenobiDB('example.yaml', auto_save=False)
