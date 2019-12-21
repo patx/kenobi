@@ -101,7 +101,7 @@ class KenobiDB(object):
         return True
 
     def remove(self, key, value):
-        """Remove a document with the matching key: value pair as key
+        """Remove document(s) with the matching key: value pair as key
         and value args given, return document(s) that were removed.
         Example:
             remove('name', 'user1')
