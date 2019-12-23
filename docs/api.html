@@ -1,0 +1,74 @@
+<html>
+<head>
+<title>kenobiDB</title>
+<link rel="icon" href="https://patx.github.io/favicon.ico">
+<link href="https://fonts.googleapis.com/css?family=Ubuntu|Ubuntu+Mono&display=swap" rel="stylesheet">
+<style>
+body { margin-right: 50%; font-family: 'Ubuntu', sans-serif;
+       background-image: url('background_kenobi.jpg');
+       background-size: 115%; background-repeat: no-repeat;
+       background-color: #f2ead7; }
+pre { font-family: 'Ubuntu Mono', monospace; }
+h1 { font-size: 50px; }
+h3 { font-size: 1.2em; }
+a.head { color: black; text-decoration: none; }
+a { color: brown; text-decoration: none; }
+a:hover { color: brown; font-weight: bold; }
+</style>
+</head>
+<body>
+<h1><a class="head" href="index.html">kenobiDB</a></h1>
+<h2>class KenobiDB(__builtin__.object) Methods</h2>
+
+<h3>__init__(self, file, auto_save=False)</h3>
+Creates a database object and loads the data from the location
+path. If the file does not exist it will be created. Also allows
+you to set auto_save to True or False (default=False). If auto_save
+is set to True the database is written to file after every change.
+
+<h3>all(self)</h3>
+Return a list of all documents in the database.
+
+<h3>find_all(self, key, value)</h3>
+ For use with a value that is a list. Return a list of documents
+with keys including at least one match from the list value.
+
+<h3>find_any(self, key, value)</h3>
+For use with a value that is a list. Return a list of documents 
+ with keys including all matches from the list value.
+
+<h3>insert(self, document)</h3>
+Add a document (a python dict) to the database and return True.
+
+
+<h3>insert_many(self, document_list)</h3>
+Add a list of documents to the database and return True.
+
+<h3>purge(self)</h3>
+Remove all documents from the database, return True.
+
+<h3>remove(self, key, value)</h3>
+Remove document(s) with the matching key: value pair as key
+and value args given, return document(s) that were removed.
+
+<h3>save_db(self)</h3>
+Force dump the database to a file, return True.
+
+<h3>search(self, key, value)</h3>
+Return a list of documents with key: value pairs matching the
+given key and value args given.
+
+<h3>update(self, id_key, id_value, new_dict)</h3>
+Update a document, takes three arguments,
+one key and one value to find which document to update,
+and a dict which contains the key/value pair to be updated/
+inserted.
+
+<br><br><br>
+<small>
+Written by <a href="http://patx.github.io/">Harrison Erd</a>
+<br>
+Art by <a href="https://www.deviantart.com/verucasalt82">Jessica Finson Roth</a>
+</small>
+</body>
+</html>
