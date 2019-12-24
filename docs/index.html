@@ -31,13 +31,13 @@ all of kenobiDB's features.
 <pre>
 >>> from kenobi import KenobiDB
 
->>> db = KenobiDB('example.yaml', auto_save=True)
+>>> db = KenobiDB('example.yaml')
 
->>> db.insert({'name': 'user1', 'groups': ['admin', 'user']})
+>>> db.insert({'key': 'value'})
 True
 
->>> db.search('name', 'user1')
-[{'name': 'user1', 'groups': ['admin', 'user']}]
+>>> db.search('key', 'value')
+[{'key': 'value'}]
 </pre>
 <br><br><br>
 <small>

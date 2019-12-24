@@ -118,7 +118,7 @@ class KenobiDB(object):
         """Update a document, takes three arguments,
         one key and one value to find which document to update,
         and a dict which contains the key/value pair to be updated/
-        inserted.
+        inserted. Return True.
         Example: 
             update('name', 'user1', {'groups': ['user', 'admin', 'sudo']})
         """
