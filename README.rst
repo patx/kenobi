@@ -1,7 +1,9 @@
 kenobiDB
---------
-
-kenobiDB is a small document based database supporting very simple usage including insertion, update, removal and search. It useses YAML. Check out the `website <http://patx.github.io/kenobi/>`_ or view the project on the `PyPI <https://pypi.org/project/kenobi/>`_.
+========
+kenobiDB is a small document based database supporting very simple usage
+including insertion, update, removal and search. It useses YAML. Check out
+the `website <http://patx.github.io/kenobi/>`_ or view the project on
+`PyPI <https://pypi.org/project/kenobi/>`_.
 
 Use it
 ------
@@ -11,14 +13,14 @@ Use it
 
 See it in action
 ----------------
-::
+.. code-block:: python
 
->>> from kenobi import KenobiDB
-
->>> db = KenobiDB('example.yaml')
-
->>> db.insert({'key': 'value'})
-True
-
->>> db.search('key', 'value')
-[{'key': 'value'}]
+    >>> from kenobi import KenobiDB
+    
+    >>> db = KenobiDB('example.yaml')
+    
+    >>> db.insert({'key': 'value'})
+    True
+    
+    >>> db.search('key', 'value')
+    [{'key': 'value'}]
