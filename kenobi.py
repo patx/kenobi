@@ -161,9 +161,9 @@ class KenobiDB(object):
                 result.append(document)
         return result
 
-    def find_any(self, key, value):
-        """For use with a value that is a list. Return a list of documents 
-        with keys including all matches from the list value.
+    def find_any(self, key, value_list):
+        """Return a list of documents with values including any matches
+        from the value_list.
         Example:
             find_any('groups', ['admin', 'sudo'])
         """
@@ -175,9 +175,9 @@ class KenobiDB(object):
                     result.append(document)
         return result
 
-    def find_all(self, key, value):
-        """For use with a value that is a list. Return a list of documents
-        with keys including at least one match from the list value.
+    def find_all(self, key, value_list):
+        """Return a list of documents with values including all matches
+        from the value_list.
         Example:
             find_all('groups', ['admin', 'user'])
         """

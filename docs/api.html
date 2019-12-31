@@ -28,13 +28,13 @@ is set to True the database is written to file after every change.
 <h3>all(self)</h3>
 Return a list of all documents in the database.
 
-<h3>find_all(self, key, value)</h3>
- For use with a value that is a list. Return a list of documents
-with keys including at least one match from the list value.
+<h3>find_all(self, key, value_list)</h3>
+Return a list of documents with values including all matches
+from the value_list.
 
-<h3>find_any(self, key, value)</h3>
-For use with a value that is a list. Return a list of documents 
- with keys including all matches from the list value.
+<h3>find_any(self, key, value_list)</h3>
+Return a list of documents with values including any matches
+from the value_list.
 
 <h3>insert(self, document)</h3>
 Add a document (a python dict) to the database and return True.
