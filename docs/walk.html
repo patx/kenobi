@@ -55,12 +55,12 @@ Use nested any/all searches as well:
 >>> db.find_all('groups', ['admin', 'user'])
 [{'name': 'user2', 'groups': ['admin', 'user']}]
 </pre>
-As you can see, 'any' tests if there is at least one document matching 
+As you can see, 'any' tests if there is at least one document matching
 the search while 'all' ensures all documents match the search.<br>
 
 <h3>Updating a document</h3>
 Update a with the matching key, value pair
-<pre>>>> db.update('name', 'user1', {'groups': ['user', sudo', 'admin']})
+<pre>>>> db.update('name', 'user1', {'groups': ['user', 'sudo', 'admin']})
 True</pre>
 Lets check to see the updated document
 <pre>>>> db.all()
