@@ -68,26 +68,36 @@ class KenobiDB:
                 self.db = []
                 self._autosave()
 
+
     # Utility functions
 
     def _save_to_file(self):
         temp_file = NamedTemporaryFile("w", delete=False, dir=os.path.dirname(self.file))
         try:
+            # Write the database to the temporary file
             yaml.dump(self.db, temp_file)
             temp_file.close()
+            # Replace the original database file with the temp file atomically
             os.replace(temp_file.name, self.file)
         except Exception as e:
             os.unlink(temp_file.name)  # Cleanup temp file on failure
             raise e
 
-    def save_db(self):
-        with self._lock, self._process_lock:
-            self._save_to_file()
-        return True
-
     def _autosave(self):
         if self.auto_save:
             self.save_db()
+
+    def save_db(self):
+        """Save the database, ensuring thread and process safety."""
+        # If already inside a locked context, just call _save_to_file directly
+        if self.auto_save and self._lock._is_owned():
+            self._save_to_file()
+        else:
+            # Otherwise, acquire both locks to save the database
+            with self._lock, self._process_lock:
+                self._save_to_file()
+        return True
+
 
     # Add/delete functions
 
@@ -133,6 +143,7 @@ class KenobiDB:
             self.db = []
             self._autosave()
         return True
+
 
     # Search functions
 
