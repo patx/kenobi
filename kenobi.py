@@ -8,40 +8,42 @@
     https://patx.github.io/kenobi/
 """
 
-# Copyright 2019 Harrison Erd
+# Copyright Harrison Erd
 
-# Redistribution and use in source and binary forms, with or without 
+# Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are met:
 #
-# 1. Redistributions of source code must retain the above copyright notice, 
+# 1. Redistributions of source code must retain the above copyright notice,
 # this list of conditions and the following disclaimer.
 #
-# 2. Redistributions in binary form must reproduce the above copyright notice, 
-# this list of conditions and the following disclaimer in the documentation 
+# 2. Redistributions in binary form must reproduce the above copyright notice,
+# this list of conditions and the following disclaimer in the documentation
 # and/or other materials provided with the distribution.
 #
-# 3. Neither the name of the copyright holder nor the names of its 
-# contributors may be used to endorse or promote products derived from this 
+# 3. Neither the name of the copyright holder nor the names of its
+# contributors may be used to endorse or promote products derived from this
 # software without specific prior written permission.
 #
-# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS 
-# IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, 
-# THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR 
-# PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR 
-# CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, 
-# EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, 
-# PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; 
-# OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, 
-# WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR 
-# OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, 
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS
+# IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+# THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+# PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR
+# CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+# EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+# PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS;
+# OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+# WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR
+# OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
 # EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 
-import yaml
 import os
+import yaml
+from threading import RLock
+from multiprocessing import Lock as ProcessLock
+from tempfile import NamedTemporaryFile
 
-
-class KenobiDB(object):
+class KenobiDB:
 
     def __init__(self, file, auto_save=False):
         """Creates a database object and loads the data from the location
@@ -51,141 +53,106 @@ class KenobiDB(object):
         """
         self.file = os.path.expanduser(file)
         self.auto_save = auto_save
-        if os.path.exists(self.file):
-            if os.stat(self.file).st_size == 0:
+        self._lock = RLock()
+        self._process_lock = ProcessLock()
+
+        with self._lock, self._process_lock:
+            if os.path.exists(self.file):
+                if os.stat(self.file).st_size == 0:
+                    self.db = []
+                    self._autosave()
+                else:
+                    with open(self.file, 'r') as read_file:
+                        self.db = yaml.safe_load(read_file) or []
+            else:
                 self.db = []
                 self._autosave()
-            else:
-                read_file = open(self.file, 'r')
-                self.db = yaml.load(read_file)
-                read_file.close()
-        else:
-            self.db = []
-            self._autosave()
-
 
     # Utility functions
 
+    def _save_to_file(self):
+        temp_file = NamedTemporaryFile("w", delete=False, dir=os.path.dirname(self.file))
+        try:
+            yaml.dump(self.db, temp_file)
+            temp_file.close()
+            os.replace(temp_file.name, self.file)
+        except Exception as e:
+            os.unlink(temp_file.name)  # Cleanup temp file on failure
+            raise e
+
     def save_db(self):
-        """Force dump the database to a file, return True."""
-        save_file = open(self.file, 'w')
-        yaml.dump(self.db, save_file)
-        save_file.close()
+        with self._lock, self._process_lock:
+            self._save_to_file()
         return True
 
     def _autosave(self):
-        """Save database to file if auto_save=True."""
         if self.auto_save:
             self.save_db()
-
 
     # Add/delete functions
 
     def insert(self, document):
-        """Add a document (a python dict) to the database and return True.
-        Example:
-            insert({'name': 'user1', 'groups': ['user', 'sudo']})
-        """
-        self.db.append(document)
-        self._autosave()
+        """Add a document (a python dict) to the database and return True."""
+        if not isinstance(document, dict):
+            raise TypeError("Must insert a dict")
+        with self._lock, self._process_lock:
+            self.db.append(document)
+            self._autosave()
         return True
 
     def insert_many(self, document_list):
-        """Add a list of documents to the database and return True.
-        Example:
-            insert_many([{1: 2, 8: 9}, {1: 'value'}])
-        """
-        for document in document_list:
-            self.db.append(document)
-        self._autosave()
+        """Add a list of documents to the database and return True."""
+        if not isinstance(document_list, list) or not all(isinstance(doc, dict) for doc in document_list):
+            raise TypeError("Must insert a list of dicts")
+        with self._lock, self._process_lock:
+            self.db.extend(document_list)
+            self._autosave()
         return True
 
     def remove(self, key, value):
-        """Remove document(s) with the matching key: value pair as key
-        and value args given, return document(s) that were removed.
-        Example:
-            remove('name', 'user1')
-        """
-        result = []
-        for document in self.db:
-            if (key, value) in document.items():
-                result.append(document)
-                self.db.remove(document)
-        self._autosave()
-        return result
+        """Remove document(s) with the matching key: value pair."""
+        with self._lock, self._process_lock:
+            original_db = self.db[:]
+            self.db = [doc for doc in self.db if (key, value) not in doc.items()]
+            removed_items = [doc for doc in original_db if doc not in self.db]
+            self._autosave()
+        return removed_items
 
     def update(self, id_key, id_value, new_dict):
-        """Update a document, takes three arguments,
-        one key and one value to find which document to update,
-        and a dict which contains the key/value pair to be updated/
-        inserted. Return True.
-        Example: 
-            update('name', 'user1', {'groups': ['user', 'admin', 'sudo']})
-        """
-        for document in self.db:
-            if (id_key, id_value) in document.items():
-                self.db.remove(document)
-                document.update(new_dict)
-                self.insert(document)
-        self._autosave()
+        """Update a document, takes three arguments."""
+        with self._lock, self._process_lock:
+            for idx, document in enumerate(self.db):
+                if document.get(id_key) == id_value:
+                    self.db[idx] = {**document, **new_dict}
+            self._autosave()
         return True
 
     def purge(self):
-        """Remove all documents from the database, return True.
-        Example:
-            purge()
-        """
-        self.db = []
-        self._autosave()
+        """Remove all documents from the database, return True."""
+        with self._lock, self._process_lock:
+            self.db = []
+            self._autosave()
         return True
-
 
     # Search functions
 
     def all(self):
-        """Return a list of all documents in the database.
-        Example:
-            all()
-        """
-        return self.db
+        """Return a list of all documents in the database."""
+        with self._lock:
+            return self.db[:]
 
     def search(self, key, value):
-        """Return a list of documents with key: value pairs matching the
-        given key and value args given.
-        Example:
-            search('name', 'user1')
-        """
-        result = []
-        for document in self.db:
-            if (key, value) in document.items():
-                result.append(document)
-        return result
+        """Return a list of documents with key: value pairs matching."""
+        with self._lock:
+            return [doc for doc in self.db if doc.get(key) == value]
 
     def find_any(self, key, value_list):
-        """Return a list of documents with values including any matches
-        from the value_list.
-        Example:
-            find_any('groups', ['admin', 'sudo'])
-        """
-        result = []
-        for document in self.db:
-            if key in document.keys():
-                doc_list = document[key]
-                if any(elem in doc_list for elem in value):
-                    result.append(document)
-        return result
+        """Return a list of documents with values including any matches."""
+        with self._lock:
+            return [doc for doc in self.db if key in doc and any(v in doc[key] for v in value_list)]
 
     def find_all(self, key, value_list):
-        """Return a list of documents with values including all matches
-        from the value_list.
-        Example:
-            find_all('groups', ['admin', 'user'])
-        """
-        result = []
-        for document in self.db:
-            if key in document.keys():
-                doc_list = document[key]
-                if all(elem in doc_list for elem in value):
-                    result.append(document)
-        return result
+        """Return a list of documents with values including all matches."""
+        with self._lock:
+            return [doc for doc in self.db if key in doc and all(v in doc[key] for v in value_list)]
 
