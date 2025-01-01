@@ -57,19 +57,26 @@ class KenobiDB:
         self._process_lock = ProcessLock()
 
         with self._lock, self._process_lock:
-            if os.path.exists(self.file):
-                if os.stat(self.file).st_size == 0:
-                    self.db = []
-                    self._autosave()
-                else:
-                    with open(self.file, 'r') as read_file:
-                        self.db = yaml.safe_load(read_file) or []
-            else:
-                self.db = []
-                self._autosave()
+            self.db = self._load_db()
+            self._autosave()
 
 
     # Utility functions
+
+    def _load_db(self):
+        """Load the database from the file or initialize it as empty."""
+        if os.path.exists(self.file):
+            if os.stat(self.file).st_size == 0:
+                return []
+            try:
+                with open(self.file, 'r') as read_file:
+                    data = yaml.safe_load(read_file)
+                    if not isinstance(data, list):
+                        raise yaml.YAMLError("Database file content is not a valid")
+                    return data
+            except yaml.YAMLError as e:
+                raise RuntimeError("Database file content is not a valid")
+        return []
 
     def _save_to_file(self):
         temp_file = NamedTemporaryFile("w", delete=False, dir=os.path.dirname(self.file))
@@ -120,7 +127,7 @@ class KenobiDB:
         return True
 
     def remove(self, key, value):
-        """Remove document(s) with the matching key: value pair."""
+        """Remove document(s) with the matching key:value pair."""
         with self._lock, self._process_lock:
             original_db = self.db[:]
             self.db = [doc for doc in self.db if (key, value) not in doc.items()]
@@ -129,7 +136,7 @@ class KenobiDB:
         return removed_items
 
     def update(self, id_key, id_value, new_dict):
-        """Update a document, takes three arguments."""
+        """Update a document, return True takes three arguments."""
         with self._lock, self._process_lock:
             for idx, document in enumerate(self.db):
                 if document.get(id_key) == id_value:
