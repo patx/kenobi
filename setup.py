@@ -9,11 +9,11 @@ Website: https://patx.github.io/kenobi/
 from distutils.core import setup
 
 setup(name="kenobi",
-    version="2.1",
+    version="3.0",
     description="document based database using yaml",
     long_description=__doc__,
     author="Harrison Erd",
-    author_email="erdh@mail.broward.edu",
+    author_email="harrisonerd@gmail.com",
     license="three-clause BSD",
     url="http://patx.github.io/kenobi",
     classifiers = [

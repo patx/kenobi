@@ -1,7 +1,7 @@
 kenobiDB
 ========
 kenobiDB is a small document based database supporting very simple usage
-including insertion, update, removal and search. It useses YAML. Check out
+including insertion, update, removal and search. It useses YAML, is thread safe, process safe, and atomic. Check out
 the `website <http://patx.github.io/kenobi/>`_ or view the project on
 `PyPI <https://pypi.org/project/kenobi/>`_.
 
