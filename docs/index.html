@@ -17,7 +17,7 @@ a:hover { color: brown; font-weight: bold; }
 <body>
 <h1>kenobiDB</h1>
 <strong>kenobiDB</strong> is a <strong>small document based database</strong> supporting very simple
-usage including insertion, update, removal and search. It useses <a href="http://pyyaml.org/">YAML</a>, is
+usage including insertion, update, removal and search. It useses <a href="https://docs.python.org/3/library/sqlite3.html">SQLite3</a>, is
 thread safe, process safe, and atomic.
 Check out the source code on <a href="http://github.com/patx/kenobi">
 GitHub</a> or view the project on the <a href="https://pypi.org/project/kenobi/">Python Package Index</a>.
@@ -33,7 +33,7 @@ all of kenobiDB's features to get started.
 <pre>
 >>> from kenobi import KenobiDB
 
->>> db = KenobiDB('example.yaml')
+>>> db = KenobiDB('example.db')
 
 >>> db.insert({'name': 'Obi-Wan', 'color': 'blue'})
 True

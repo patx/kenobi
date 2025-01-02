@@ -8,7 +8,7 @@ class TestKenobiDB(unittest.TestCase):
 
     def setUp(self):
         """Set up a temporary test database file."""
-        self.test_file = "test_db.yaml"
+        self.test_file = "test_db.db"
         self.db = KenobiDB(self.test_file)
 
     def tearDown(self):
@@ -78,15 +78,6 @@ class TestKenobiDB(unittest.TestCase):
         result = self.db.find_all("tags", ["coding", "testing"])
         self.assertEqual(len(result), 2)
 
-    def test_file_persistence(self):
-        """Test that data persists to the file after saving."""
-        document = {"name": "Alice", "age": 30}
-        self.db.insert(document)
-        self.db.save_db()
-        self.assertTrue(os.path.exists(self.test_file))
-        new_db = KenobiDB(self.test_file)
-        self.assertIn(document, new_db.all())
-
     def test_concurrent_insert_operations(self):
         """Test concurrent inserts from multiple threads."""
         def insert_documents():
@@ -106,16 +97,6 @@ class TestKenobiDB(unittest.TestCase):
         large_dataset = [{"id": i, "value": i * 2} for i in range(100000)]
         self.db.insert_many(large_dataset)
         self.assertEqual(len(self.db.all()), len(large_dataset))
-
-    def test_invalid_yaml_file(self):
-        """Test behavior with an invalid YAML file."""
-        invalid_content = "::invalid_yaml::"
-        with open(self.test_file, "w") as invalid_file:
-            invalid_file.write(invalid_content)
-
-        # Verify that a RuntimeError is raised when attempting to load
-        with self.assertRaises(RuntimeError):
-            KenobiDB(self.test_file)
 
 if __name__ == "__main__":
     unittest.main()

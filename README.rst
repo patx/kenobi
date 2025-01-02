@@ -1,7 +1,7 @@
 kenobiDB
 ========
 kenobiDB is a small document based database supporting very simple usage
-including insertion, update, removal and search. It useses YAML, is thread safe, process safe, and atomic. Check out
+including insertion, update, removal and search. It useses SQLite, is thread safe, process safe, and atomic. Check out
 the `website <http://patx.github.io/kenobi/>`_ or view the project on
 `PyPI <https://pypi.org/project/kenobi/>`_.
 
@@ -17,7 +17,7 @@ See it in action
 
     >>> from kenobi import KenobiDB
 
-    >>> db = KenobiDB('example.yaml')
+    >>> db = KenobiDB('example.db')
 
     >>> db.insert({'name': 'Obi-Wan', 'color': 'blue'})
     True

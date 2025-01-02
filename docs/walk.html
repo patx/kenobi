@@ -24,10 +24,7 @@ if you are following along.
 Import kenobiDB
 <pre>>>> from kenobi import KenobiDB</pre>
 Create instance of KenobiDB class
-<pre>>>> db = KenobiDB('database.yaml')</pre>
-If you would like kenobiDB to write changes to the disk as soon as they happen
-you can set auto_save to True:
-<pre>>>> db = KenobiDB('database.yaml', auto_save=True)</pre>
+<pre>>>> db = KenobiDB('database.db')</pre>
 
 <h3>Inserting documents</h3>
 Insert one document at a time
@@ -67,11 +64,7 @@ Lets check to see the updated document
 [{'name': 'user1', 'groups': ['user', 'sudo', 'admin']},
  {'name': 'user2', 'groups': ['admin', 'user']},
  {'name': 'user3', 'groups': ['sudo', 'user']}]</pre>
-<h3>Saving the database</h3>
-Since auto_save was not to True when this instance of KenobiDB was created,
-you have to save the database to the 'database.yaml' file
-<pre>>>> db.save_db()
-True</pre>
+
 <h3>Removing documents</h3>
 Remove one document:
 <pre>>>> db.remove('name', 'user1')
