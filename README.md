@@ -58,7 +58,7 @@ db.purge()
 
 ## Search Operations:
 * All: Retrieve all documents with optional pagination.
-````
+```
 db.all(limit=10, offset=0)
 db.all() # No pagination
 ```
