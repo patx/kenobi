@@ -150,6 +150,8 @@ class KenobiDB:
             cursor = conn.execute(query, [key] + value_list + [len(value_list)])
             return [json.loads(row[0]) for row in cursor.fetchall()]
 
+    # Asynchronous functions
+
     def execute_async(self, func, *args, **kwargs):
         """Execute a function asynchronously using a thread pool."""
         return self.executor.submit(func, *args, **kwargs)
