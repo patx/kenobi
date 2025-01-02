@@ -33,9 +33,9 @@ db = KenobiDB('example.db')
 ## Basic Operations:
 * Insert: Add a single document or multiple documents to the database.
 ```
->>> db.insert({'name': 'Obi-Wan', 'color': 'blue'})
+db.insert({'name': 'Obi-Wan', 'color': 'blue'})
 
->>> db.insert_many([{'name': 'Anakin', 'color': 'red'}, {'name': 'Yoda', 'color': 'green'}])
+db.insert_many([{'name': 'Anakin', 'color': 'red'}, {'name': 'Yoda', 'color': 'green'}])
 ```
 
 * Remove: Remove documents matching a specific key-value pair.
@@ -56,7 +56,7 @@ db.purge()
 ## Search Operations:
 * All: Retrieve all documents with optional pagination.
 ```
-db.all(limit=10, offset=0)
+db.all(limit=10, offset=0) # With pagination
 
 db.all() # No pagination
 ```

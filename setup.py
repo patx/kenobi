@@ -1,7 +1,7 @@
 
 """
 KenobiDB is a small document based DB, supporting very simple
-usage including insertion, removal and basic search. Made with YAML.
+usage including insertion, removal and basic search. Made with SQLite.
 Written by Harrison Erd (https://patx.github.io/)
 Website: https://patx.github.io/kenobi/
 """
@@ -9,8 +9,8 @@ Website: https://patx.github.io/kenobi/
 from distutils.core import setup
 
 setup(name="kenobi",
-    version="3.0",
-    description="document based database using yaml",
+    version="4.0",
+    description="document based database using sqlite",
     long_description=__doc__,
     author="Harrison Erd",
     author_email="harrisonerd@gmail.com",
@@ -21,6 +21,5 @@ setup(name="kenobi",
         "License :: OSI Approved :: BSD License",
         "Intended Audience :: Developers",
         "Topic :: Database"],
-    py_modules=['kenobi'],
-    install_requires=["pyyaml>=5.2",],)
+    py_modules=['kenobi'])
 
