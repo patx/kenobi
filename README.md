@@ -1,8 +1,6 @@
 # KenobiDB
 
-KenobiDB is a document-based data store abstraction built on Python’s `sqlite3`, offering a simple and efficient way to manage JSON-like data. Its API is highly similar to MongoDB’s, providing familiar operations for insertion, updates, and searches—without the need for a server connection. By removing the complexity of SQL, KenobiDB delivers a secure, high-performance environment with built-in thread safety, async execution, and basic indexing.
-
-Perfect for small applications and prototypes, KenobiDB combines SQLite’s lightweight, serverless setup with the flexibility of document-based storage. Check out the [website](http://patx.github.io/kenobi/) or view the project on [PyPI](https://pypi.org/project/kenobi/).
+KenobiDB is a document-based data store abstraction built on Python’s `sqlite3`, offering a simple and efficient way to manage JSON-like data. Its API is highly similar to MongoDB’s, providing familiar operations for insertion, updates, and searches—without the need for a server connection. By removing the complexity of SQL, KenobiDB delivers a secure, high-performance environment with built-in thread safety, async execution, and basic indexing while leveraging the simplicity of a document-based database. Perfect for small applications and prototypes, KenobiDB combines SQLite’s lightweight, serverless setup with the flexibility of document-based storage. Check out the [website](http://patx.github.io/kenobi/) or view the project on [PyPI](https://pypi.org/project/kenobi/).
 
 ## Features
 
