@@ -1,93 +1,143 @@
-# kenobiDB
-KenobiDB is a document-based data store abstraction built over SQLite, offering a simple and efficient way to store and retrieve JSON-like data.
-By abstracting away the complexity of SQL, it provides a flexible and secure environment for handling data with high performance. With built-in
-thread safety, async execution, and basic indexing, KenobiDB ensures reliable and fast data management while maintaining the simplicity of a document store.
-Ideal for small applications and prototypes, it combines the power of SQLite with the ease and flexibility of document-based storage. Check out
-the [website](http://patx.github.io/kenobi/) or view the project on [PyPI](https://pypi.org/project/kenobi/).
+# KenobiDB
 
-## Use it
-* You can install kenobiDB using the pip command  `pip install kenobi`.
-* For the latest version just copy and paste the `kenobi.py` file into your working directory.
+KenobiDB is a document-based data store abstraction built on Python’s `sqlite3`, offering a simple and efficient way to manage JSON-like data. Its API is highly similar to MongoDB’s, providing familiar operations for insertion, updates, and searches—without the need for a server connection. By removing the complexity of SQL, KenobiDB delivers a secure, high-performance environment with built-in thread safety, async execution, and basic indexing.
 
-## kenobiDB is fun!
+Perfect for small applications and prototypes, KenobiDB combines SQLite’s lightweight, serverless setup with the flexibility of document-based storage. Check out the [website](http://patx.github.io/kenobi/) or view the project on [PyPI](https://pypi.org/project/kenobi/).
+
+## Features
+
+- Lightweight and serverless setup using SQLite.
+- MongoDB-like API for familiar operations.
+- Supports key-value pair searching instead of complex SQL queries.
+- Thread safety with `RLock`.
+- Asynchronous execution with `ThreadPoolExecutor`.
+- Built-in basic indexing for efficient searches.
+- Super easy integration.
+
+## Installation
+
+You can install KenobiDB using pip:
+```bash
+pip install kenobi
 ```
->>> from kenobi import KenobiDB
 
->>> db = KenobiDB('example.db')
+Alternatively, for the latest version, copy and paste the `kenobi.py` file into your working directory.
 
->>> db.insert({'name': 'Obi-Wan', 'color': 'blue'})
-    True
+## Quick Start
 
->>> db.search('color', 'blue')
-    [{'name': 'Obi-Wan', 'color': 'blue'}]
+```python
+from kenobi import KenobiDB
+
+db = KenobiDB('example.db')
+
+db.insert({'name': 'Obi-Wan', 'color': 'blue'})
+# Output: True
+
+db.search('color', 'blue')
+# Output: [{'name': 'Obi-Wan', 'color': 'blue'}]
 ```
 
-# Overview/Usage
+## Overview/Usage
 
-## Initialization and Setup:
-* The database is initialized with a specified file. If the file does not exist, it is created. SQLite is used for storage, and the database ensures the necessary table and indices are created.
-```
+### Initialization and Setup
+
+Initialize the database with a specified file. If the file does not exist, it will be created. SQLite is used for storage, and the database ensures the necessary table and indices are created.
+
+```python
 db = KenobiDB('example.db')
 ```
 
-## Basic Operations:
-* Insert: Add a single document or multiple documents to the database.
-```
+### Basic Operations
+
+#### Insert
+Add a single document or multiple documents to the database.
+```python
 db.insert({'name': 'Obi-Wan', 'color': 'blue'})
 
-db.insert_many([{'name': 'Anakin', 'color': 'red'}, {'name': 'Yoda', 'color': 'green'}])
+db.insert_many([
+    {'name': 'Anakin', 'color': 'red'},
+    {'name': 'Yoda', 'color': 'green'}
+])
 ```
 
-* Remove: Remove documents matching a specific key-value pair.
-```
+#### Remove
+Remove documents matching a specific key-value pair.
+```python
 db.remove('name', 'Obi-Wan')
 ```
 
-* Update: Update documents matching a specific key-value pair with new data.
-```
+#### Update
+Update documents matching a specific key-value pair with new data.
+```python
 db.update('name', 'Anakin', {'color': 'dark'})
 ```
 
-* Purge: Remove all documents from the database.
-```
+#### Purge
+Remove all documents from the database.
+```python
 db.purge()
 ```
 
-## Search Operations:
-* All: Retrieve all documents with optional pagination.
-```
-db.all(limit=10, offset=0) # With pagination
+### Search Operations
 
-db.all() # No pagination
+#### All
+Retrieve all documents with optional pagination.
+```python
+db.all(limit=10, offset=0)  # With pagination
+
+db.all()  # No pagination
 ```
 
-* Search: Retrieve documents matching a specific key-value pair with optional pagination.
-```
+#### Search
+Retrieve documents matching a specific key-value pair with optional pagination.
+```python
 db.search('color', 'blue')
 ```
 
-* Find Any: Retrieve documents where a key matches any value in a list.
-```
+#### Find Any
+Retrieve documents where a key matches any value in a list.
+```python
 db.find_any('color', ['blue', 'red'])
 ```
 
-* Find All: Retrieve documents where a key matches all values in a list.
-```
+#### Find All
+Retrieve documents where a key matches all values in a list.
+```python
 db.find_all('color', ['blue', 'red'])
 ```
 
-## Concurrency and Asynchronous Execution:
-* The class uses `RLock` for thread safety.
-* A `ThreadPoolExecutor` with a maximum of 5 workers is used to handle concurrent operations.
-* The `execute_async` method allows for asynchronous execution of functions using the thread pool.
-```
+### Concurrency and Asynchronous Execution
+
+KenobiDB uses `RLock` for thread safety and `ThreadPoolExecutor` with a maximum of 5 workers for concurrent operations.
+
+#### Asynchronous Execution
+Use the `execute_async` method to run functions asynchronously.
+
+```python
 def insert_document(db, document):
     db.insert(document)
+
 future = db.execute_async(insert_document, db, {'name': 'Luke', 'color': 'green'})
 ```
 
-   * The `close` method shuts down the thread pool executor.
-```
+#### Close
+Shut down the thread pool executor.
+```python
 db.close()
 ```
+
+## Testing and Contributions
+
+Contributions are welcome! To test the library:
+1. Clone the repository.
+2. Report issues as you encounter them.
+3. Run the unittests.
+
+
+Feel free to open issues or submit pull requests on the [GitHub repository](https://github.com/patx/kenobi).
+
+## Limitations
+
+KenobiDB is designed for small-scale applications and prototypes. While it provides excellent performance for most operations, it is not intended to replace full-fledged databases for high-scale or enterprise-level applications.
+
 
