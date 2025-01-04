@@ -2,51 +2,60 @@
 # -*- coding: utf-8 -*-
 
 """
-    KenobiDB is a small document based DB, supporting very simple
-    usage including insertion, removal and basic search.
-    Written by Harrison Erd (https://patx.github.io/)
-    https://patx.github.io/kenobi/
+KenobiDB is a small document-based DB, supporting simple usage including
+insertion, removal, and basic search.
+
+Written by Harrison Erd (https://patx.github.io/)
+https://patx.github.io/kenobi/
 """
 
 # Copyright Harrison Erd
-
+#
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are met:
 #
 # 1. Redistributions of source code must retain the above copyright notice,
-# this list of conditions and the following disclaimer.
-#
+#    this list of conditions and the following disclaimer.
 # 2. Redistributions in binary form must reproduce the above copyright notice,
-# this list of conditions and the following disclaimer in the documentation
-# and/or other materials provided with the distribution.
+#    this list of conditions and the following disclaimer in the documentation
+#    and/or other materials provided with the distribution.
+# 3. Neither the name of the copyright holder nor the names of its contributors
+#    may be used to endorse or promote products derived from this software
+#    without specific prior written permission.
 #
-# 3. Neither the name of the copyright holder nor the names of its
-# contributors may be used to endorse or promote products derived from this
-# software without specific prior written permission.
-#
-# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS
-# IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
-# THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
-# PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR
-# CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
-# EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
-# PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS;
-# OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
-# WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR
-# OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
-# EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+# AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+# IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+# ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE
+# LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+# CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+# SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+# INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+# CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+# ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+# POSSIBILITY OF SUCH DAMAGE.
 
 import os
-import sqlite3
 import json
+import sqlite3
 from threading import RLock
 from concurrent.futures import ThreadPoolExecutor
 
+
 class KenobiDB:
+    """
+    A lightweight document-based database built on SQLite. Supports basic
+    operations such as insert, remove, search, update, and asynchronous
+    execution.
+    """
 
     def __init__(self, file):
-        """Creates a database object and sets up SQLite storage. If the database
-        file does not exist, it will be created.
+        """
+        Initialize the KenobiDB instance.
+
+        Args:
+            file (str): Path to the SQLite file. If it does not exist,
+                it will be created.
         """
         self.file = os.path.expanduser(file)
         self._lock = RLock()
@@ -54,7 +63,10 @@ class KenobiDB:
         self._initialize_db()
 
     def _initialize_db(self):
-        """Initialize the SQLite database and ensure the table and indices exist."""
+        """
+        Create the table and index if they do not exist, and set
+        journal mode to WAL.
+        """
         with sqlite3.connect(self.file) as conn:
             conn.execute("""
                 CREATE TABLE IF NOT EXISTS documents (
@@ -63,99 +75,249 @@ class KenobiDB:
                 )
             """)
             conn.execute("""
-                CREATE INDEX IF NOT EXISTS idx_key ON documents (
+                CREATE INDEX IF NOT EXISTS idx_key
+                ON documents (
                     json_extract(data, '$.key')
                 )
             """)
             conn.execute("PRAGMA journal_mode=WAL;")
 
-    # Add/delete functions
-
     def insert(self, document):
-        """Add a document (a Python dict) to the database."""
+        """
+        Insert a single document (dict) into the database.
+
+        Args:
+            document (dict): The document to insert.
+
+        Returns:
+            bool: True upon successful insertion.
+
+        Raises:
+            TypeError: If the provided document is not a dictionary.
+        """
         if not isinstance(document, dict):
             raise TypeError("Must insert a dict")
         with self._lock, sqlite3.connect(self.file) as conn:
-            conn.execute("INSERT INTO documents (data) VALUES (?)", (json.dumps(document),))
+            conn.execute(
+                "INSERT INTO documents (data) VALUES (?)",
+                (json.dumps(document),)
+            )
+            return True
 
     def insert_many(self, document_list):
-        """Add a list of documents to the database."""
-        if not isinstance(document_list, list) or not all(isinstance(doc, dict) for doc in document_list):
+        """
+        Insert multiple documents (list of dicts) into the database.
+
+        Args:
+            document_list (list): The list of documents to insert.
+
+        Returns:
+            bool: True upon successful insertion.
+
+        Raises:
+            TypeError: If the provided object is not a list of dicts.
+        """
+        if (
+            not isinstance(document_list, list)
+            or not all(isinstance(doc, dict) for doc in document_list)
+        ):
             raise TypeError("Must insert a list of dicts")
         with self._lock, sqlite3.connect(self.file) as conn:
-            conn.executemany("INSERT INTO documents (data) VALUES (?)", [(json.dumps(doc),) for doc in document_list])
+            conn.executemany(
+                "INSERT INTO documents (data) VALUES (?)",
+                [(json.dumps(doc),) for doc in document_list]
+            )
+            return True
 
     def remove(self, key, value):
-        """Remove document(s) with the matching key:value pair."""
-        query = "DELETE FROM documents WHERE json_extract(data, '$.' || ?) = ?"
+        """
+        Remove all documents where the given key matches the specified value.
+
+        Args:
+            key (str): The field name to match.
+            value (Any): The value to match.
+
+        Returns:
+            int: Number of documents removed.
+
+        Raises:
+            ValueError: If 'key' is empty or 'value' is None.
+        """
+        if not key or not isinstance(key, str):
+            raise ValueError("key must be a non-empty string")
+        if value is None:
+            raise ValueError("value cannot be None")
+        query = (
+            "DELETE FROM documents "
+            "WHERE json_extract(data, '$.' || ?) = ?"
+        )
         with self._lock, sqlite3.connect(self.file) as conn:
-            conn.execute(query, (key, value))
+            result = conn.execute(query, (key, value))
+            return result.rowcount
 
     def update(self, id_key, id_value, new_dict):
-        """Update a document."""
-        query = "UPDATE documents SET data = ? WHERE json_extract(data, '$.' || ?) = ?"
+        """
+        Update documents that match (id_key == id_value) by merging new_dict.
+
+        Args:
+            id_key (str): The field name to match.
+            id_value (Any): The value to match.
+            new_dict (dict): A dictionary of changes to apply.
+
+        Returns:
+            bool: True if at least one document was updated, False otherwise.
+
+        Raises:
+            TypeError: If new_dict is not a dict.
+            ValueError: If id_key is invalid or id_value is None.
+        """
+        if not isinstance(new_dict, dict):
+            raise TypeError("new_dict must be a dictionary")
+        if not id_key or not isinstance(id_key, str):
+            raise ValueError("id_key must be a non-empty string")
+        if id_value is None:
+            raise ValueError("id_value cannot be None")
+
+        select_query = (
+            "SELECT data FROM documents "
+            "WHERE json_extract(data, '$.' || ?) = ?"
+        )
+        update_query = (
+            "UPDATE documents "
+            "SET data = ? "
+            "WHERE json_extract(data, '$.' || ?) = ?"
+        )
         with self._lock, sqlite3.connect(self.file) as conn:
-            cursor = conn.execute("SELECT data FROM documents WHERE json_extract(data, '$.' || ?) = ?", (id_key, id_value))
-            for row in cursor.fetchall():
+            cursor = conn.execute(select_query, (id_key, id_value))
+            documents = cursor.fetchall()
+            if not documents:
+                return False
+            for row in documents:
                 document = json.loads(row[0])
+                if not isinstance(document, dict):
+                    continue
                 document.update(new_dict)
-                conn.execute(query, (json.dumps(document), id_key, id_value))
+                conn.execute(
+                    update_query,
+                    (json.dumps(document), id_key, id_value)
+                )
+            return True
 
     def purge(self):
-        """Remove all documents from the database."""
+        """
+        Remove all documents from the database.
+
+        Returns:
+            bool: True upon successful purge.
+        """
         with self._lock, sqlite3.connect(self.file) as conn:
             conn.execute("DELETE FROM documents")
-
-    # Search functions
+            return True
 
     def all(self, limit=100, offset=0):
-        """Return a paginated list of all documents."""
+        """
+        Return a paginated list of all documents.
+
+        Args:
+            limit (int): The maximum number of documents to return.
+            offset (int): The starting point for retrieval.
+
+        Returns:
+            list: A list of all documents (dicts).
+        """
         query = "SELECT data FROM documents LIMIT ? OFFSET ?"
         with self._lock, sqlite3.connect(self.file) as conn:
             cursor = conn.execute(query, (limit, offset))
             return [json.loads(row[0]) for row in cursor.fetchall()]
 
     def search(self, key, value, limit=100, offset=0):
-        """Return a paginated list of documents with key:value pairs matching."""
-        query = "SELECT data FROM documents WHERE json_extract(data, '$.' || ?) = ? LIMIT ? OFFSET ?"
+        """
+        Return a list of documents matching (key == value).
+
+        Args:
+            key (str): The document field to match on.
+            value (Any): The value for which to search.
+            limit (int): The maximum number of documents to return.
+            offset (int): The starting point for retrieval.
+
+        Returns:
+            list: A list of matching documents (dicts).
+        """
+        query = (
+            "SELECT data FROM documents "
+            "WHERE json_extract(data, '$.' || ?) = ? "
+            "LIMIT ? OFFSET ?"
+        )
         with self._lock, sqlite3.connect(self.file) as conn:
             cursor = conn.execute(query, (key, value, limit, offset))
             return [json.loads(row[0]) for row in cursor.fetchall()]
 
     def find_any(self, key, value_list):
-        """Return documents where the key matches any value in value_list."""
-        placeholders = ', '.join(['?'] * len(value_list))
+        """
+        Return documents where key matches any value in value_list.
+
+        Args:
+            key (str): The document field to match on.
+            value_list (list): A list of possible values.
+
+        Returns:
+            list: A list of matching documents.
+        """
+        placeholders = ", ".join(["?"] * len(value_list))
         query = f"""
-        SELECT DISTINCT documents.data
-        FROM documents, json_each(documents.data, '$.' || ?)
-        WHERE json_each.value IN ({placeholders})
+            SELECT DISTINCT documents.data
+            FROM documents, json_each(documents.data, '$.' || ?)
+            WHERE json_each.value IN ({placeholders})
         """
         with self._lock, sqlite3.connect(self.file) as conn:
             cursor = conn.execute(query, [key] + value_list)
             return [json.loads(row[0]) for row in cursor.fetchall()]
 
     def find_all(self, key, value_list):
-        """Return documents where the key matches all values in value_list."""
-        placeholders = ', '.join(['?'] * len(value_list))
+        """
+        Return documents where the key contains all values in value_list.
+
+        Args:
+            key (str): The field to match.
+            value_list (list): The required values to match.
+
+        Returns:
+            list: A list of matching documents.
+        """
+        placeholders = ", ".join(["?"] * len(value_list))
         query = f"""
-        SELECT documents.data
-        FROM documents
-        WHERE (
-            SELECT COUNT(DISTINCT value)
-            FROM json_each(documents.data, '$.' || ?)
-            WHERE value IN ({placeholders})
-        ) = ?
+            SELECT documents.data
+            FROM documents
+            WHERE (
+                SELECT COUNT(DISTINCT value)
+                FROM json_each(documents.data, '$.' || ?)
+                WHERE value IN ({placeholders})
+            ) = ?
         """
         with self._lock, sqlite3.connect(self.file) as conn:
-            cursor = conn.execute(query, [key] + value_list + [len(value_list)])
+            cursor = conn.execute(
+                query, [key] + value_list + [len(value_list)]
+            )
             return [json.loads(row[0]) for row in cursor.fetchall()]
 
-    # Asynchronous functions
-
     def execute_async(self, func, *args, **kwargs):
-        """Execute a function asynchronously using a thread pool."""
+        """
+        Execute a function asynchronously using a thread pool.
+
+        Args:
+            func (callable): The function to execute.
+            *args: Arguments for the function.
+            **kwargs: Keyword arguments for the function.
+
+        Returns:
+            concurrent.futures.Future: A Future object representing
+            the execution.
+        """
         return self.executor.submit(func, *args, **kwargs)
 
     def close(self):
-        """Shutdown the thread pool executor."""
+        """
+        Shutdown the thread pool executor.
+        """
         self.executor.shutdown()
+

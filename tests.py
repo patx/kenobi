@@ -138,6 +138,42 @@ class TestKenobiDB(unittest.TestCase):
         results = self.db.search("key", "value OR 1=1")
         self.assertEqual(len(results), 0, "Unsafe query execution detected")
 
+    def test_large_dataset(self):
+        """Stress test: Insert and retrieve a large number of documents."""
+        num_docs = 1_000_000
+        documents = [{"key": f"value{i}"} for i in range(num_docs)]
+
+        # Measure insertion performance
+        start_time = time.time()
+        self.db.insert_many(documents)
+        end_time = time.time()
+        duration = end_time - start_time
+
+        # Ensure insertion is reasonably fast
+        self.assertLess(duration, 60, "Inserting 1,000,000 documents took too long")
+        print(f"Inserted 1,000,000 documents in {duration} seconds")
+
+        # Measure retrieval performance
+        start_time = time.time()
+        all_docs = self.db.all(limit=num_docs)
+        end_time = time.time()
+        retrieval_duration = end_time - start_time
+
+        # Ensure retrieval is correct and performant
+        self.assertEqual(len(all_docs), num_docs, "Not all documents were retrieved")
+        self.assertLess(retrieval_duration, 30, "Retrieving 1,000,000 documents took too long")
+        print(f"Retrieved 1,000,000 documents in {retrieval_duration} seconds")
+
+    def test_malformed_json_in_update(self):
+        """Test handling malformed JSON in update."""
+        # Insert a malformed document
+        malformed_document = {"id": 1, "key": "value"}
+        self.db.insert(malformed_document)
+
+        # Attempt to update with malformed JSON structure
+        with self.assertRaises(TypeError):
+            self.db.update("id", 1, "not a dict")
+
 if __name__ == "__main__":
     unittest.main()
 
