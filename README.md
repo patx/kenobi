@@ -152,7 +152,7 @@ KenobiDB is optimized to handle large datasets efficiently, leveraging SQLite's 
 
 - **1,000,000 Documents**:
 
-  - **Insertion**: Completed in approximately **10seconds**.
+  - **Insertion**: Completed in approximately **10 seconds**.
   - **Retrieval**: Completed in approximately **3 seconds**.
   - **Total Time (Insert + Retrieve)**: \~13 seconds.
 
@@ -170,6 +170,7 @@ These benchmarks were achieved on a StarLabs StarLite Mk IV (Quad-Core Intel® P
 - **Write-Ahead Logging (WAL) Mode**: Improves write concurrency and throughput.
 - **Efficient JSON Handling**: Streamlined serialization and deserialization processes.
 - While KenobiDB performs exceptionally well for small to medium datasets, it remains designed for lightweight use cases and may not be suitable for enterprise-scale applications requiring high levels of concurrency.
+- While not as fast as pure SQLite you can easily store documents, you get thread saftey/async, and other features built in ready to go!
 
 ## Testing and Contributions
 
