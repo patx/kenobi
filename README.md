@@ -107,6 +107,14 @@ Retrieve documents matching a specific key-value pair with optional pagination.
 db.search('color', 'blue')
 ```
 
+#### Glob Search
+
+Retrieve documents using regex.
+
+```python
+db.search_pattern('color', 'b*')
+```
+
 #### Find Any
 
 Retrieve documents where a key matches any value in a list.

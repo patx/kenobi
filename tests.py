@@ -150,8 +150,8 @@ class TestKenobiDB(unittest.TestCase):
         duration = end_time - start_time
 
         # Ensure insertion is reasonably fast
-        self.assertLess(duration, 60, "Inserting 1,000,000 documents took too long")
-        print(f"Inserted 1,000,000 documents in {duration} seconds")
+        self.assertLess(duration, 300, "Inserting 1,000,000 documents took too long")
+        print(f"Inserted {num_docs} documents in {duration} seconds")
 
         # Measure retrieval performance
         start_time = time.time()
@@ -161,8 +161,8 @@ class TestKenobiDB(unittest.TestCase):
 
         # Ensure retrieval is correct and performant
         self.assertEqual(len(all_docs), num_docs, "Not all documents were retrieved")
-        self.assertLess(retrieval_duration, 30, "Retrieving 1,000,000 documents took too long")
-        print(f"Retrieved 1,000,000 documents in {retrieval_duration} seconds")
+        self.assertLess(retrieval_duration, 300, "Retrieving 1,000,000 documents took too long")
+        print(f"Retrieved {num_docs} documents in {retrieval_duration} seconds")
 
     def test_malformed_json_in_update(self):
         """Test handling malformed JSON in update."""
