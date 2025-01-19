@@ -1,48 +1,86 @@
-<html>
+<!DOCTYPE html>
+<html lang="en">
 <head>
-<title>kenobiDB</title>
-<link rel="icon" href="https://patx.github.io/favicon.ico">
-<link href="https://fonts.googleapis.com/css?family=Ubuntu|Ubuntu+Mono&display=swap" rel="stylesheet">
-<style>
-body { margin-right: 50%; font-family: 'Ubuntu', sans-serif;
-       background-image: url('background_kenobi.jpg');
-       background-size: 115%; background-repeat: no-repeat;
-       background-color: #f2ead7; }
-pre { font-family: 'Ubuntu Mono', monospace; }
-h1 { font-size: 50px; }
-a { color: brown; text-decoration: none; }
-a:hover { color: brown; font-weight: bold; }
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="https://patx.github.io/favicon.ico">
+    <link href="https://fonts.googleapis.com/css?family=Ubuntu|Ubuntu+Mono&display=swap" rel="stylesheet">
+    <title>kenobiDB - Document based sqlite3 abstraction for Python</title>
+    <style>
+        .logo {
+            width: 800px;
+            margin: 40px auto;
+            font-family: "Ubuntu", "Helvetica", sans-serif;
+            font-size: 100px
+        }
+        html {
+            font-family: "Ubuntu", sans-serif;
+            width: 540px;
+            margin: 40px auto;
+            background-image: url('background_kenobi.jpg');
+            background-size: 50%; background-repeat: no-repeat;
+            background-color: #f2ead7; }
+        }
+        img.c1 {
+            position: absolute;
+            top: 0;
+            right: 0;
+            border: 0;
+        }
+        span.c2 {
+            color: #8F5902;
+        }
+        span.c9 {
+            color: #B22222;
+        }
+        a {
+            color: #8F5902;
+            border-bottom: 1px dotted #B22222;
+            text-decoration: none;
+        }
+        a:hover {
+            color: #B22222;
+            border-bottom: 1px solid #B22222;
+        }
+    </style>
 </head>
 <body>
-<h1>kenobiDB</h1>
-<strong>kenobiDB</strong> is a lightweight and high performance <strong>document-based data store</strong> that
-supports simple operations like insertion, update, removal, and search. Check out the source code on
-<a href="http://github.com/patx/kenobi">GitHub</a> or view the project on the
-<a href="https://pypi.org/project/kenobi/">Python Package Index</a>.
-<h2>Use it</h2>
-You can install kenobiDB using the <a href="https://pip.pypa.io/en/stable/">pip</a> command<br>
-<strong style="font-family: 'Ubuntu Mono', monospace">pip install kenobi</strong>
-<br><br>
-You can see a <a href="https://github.com/patx/kenobi?tab=readme-ov-file#overviewusage">walk through</a> of
-all of kenobiDB's features to get started.
-<h2>See it in action</h2>
-<pre>
->>> from kenobi import KenobiDB
+    <div class="logo">
+        kenobiDB
+    </div>
+    <div class="body">
+        <h1>Welcome</h1>
+        <p><strong>kenobiDB</strong> is a lightweight and high performance
+        <strong>document-based data store</strong> that supports simple operations
+        like insertion, update, removal, and search. Check out the source code on
+        <a href="http://github.com/patx/kenobi">GitHub</a> or view the project on the
+        <a href="https://pypi.org/project/kenobi/">Python Package Index</a>.</p>
 
->>> db = KenobiDB('example.db')
+        <h2>kenobiDB is Fun</h2>
+        <pre><code>
+<span class="c2">from</span> kenobi <span class="c2">import</span> KenobiDB
 
->>> db.insert({'name': 'Obi-Wan', 'color': 'blue'})
+<span class="c2">>>></span> db = KenobiDB(<span class="c9">'example.db'</span>)
+
+<span class="c2">>>></span> db.insert({<span class="c9">'name'</span>: <span class="c9">'Obi-Wan'</span>, <span class="c9">'color'</span>: <span class="c9">'blue'</span>})
 True
 
->>> db.search('color', 'blue')
-[{'name': 'Obi-Wan', 'color': 'blue'}]
-</pre>
-<br><br><br>
-<small>
-Written by <a href="http://patx.github.io/">Harrison Erd</a>
-<br>
-Art by <a href="https://www.deviantart.com/verucasalt82">Jessica Finson Roth</a>
-</small>
+<span class="c2">>>></span> db.search(<span class="c9">'color'</span>, <span class="c9">'blue'</span>)
+        </code></pre>
+
+        <h2>And Easy to Install</h2>
+        <pre><code>
+<span class="c2">$</span> pip install <span class="c9">kenobi</span>
+        </code></pre>
+
+        <h2>More Information</h2>
+        <p> MicroPie was written by <a href="http://patx.github.io">Harrison Erd</a>. If you would like to file an issue report, suggestions or fork the project, check out the <a href="https://github.com/patx/kenobi">Github project page</a>. You can see a <a href="https://github.com/patx/kenobi?tab=readme-ov-file#overviewusage">walk through</a> of
+all of kenobiDB's features to get started. You can also take a look at kenobiDB <a href="https://pypi.python.org/pypi/kenobi">on PyPI</a>.</p>
+
+        <a href="https://github.com/patx/kenobi">
+            <img style="position: fixed; top: 0; right: 0; border: 0;" src="https://github.blog/wp-content/uploads/2008/12/forkme_right_red_aa0000.png" alt="Fork me on GitHub">
+        </a>
+    </div>
 </body>
 </html>
+
