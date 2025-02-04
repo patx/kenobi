@@ -1,7 +1,3 @@
-
-[![Logo](https://patx.github.io/kenobi/logo.png)](https://patx.github.io/kenobi)
-
-
 KenobiDB is a document-based data store abstraction built on Python’s `sqlite3`, offering a simple and efficient way to manage JSON-like data. Its API is highly similar to MongoDB’s, providing familiar operations for insertion, updates, and searches—without the need for a server connection. By removing the complexity of SQL, KenobiDB delivers a secure, high-performance environment with built-in thread safety, async execution, and basic indexing while leveraging the simplicity of a document-based database. Perfect for small applications and prototypes, KenobiDB combines SQLite’s lightweight, serverless setup with the flexibility of document-based storage. Check out the [website](http://patx.github.io/kenobi/) or view the project on [PyPI](https://pypi.org/project/kenobi/).
 
 ## Features
@@ -32,11 +28,11 @@ from kenobi import KenobiDB
 
 db = KenobiDB('example.db')
 
-db.insert({'name': 'Obi-Wan', 'color': 'blue'})
+db.insert({'name': 'John', 'color': 'blue'})
 # Output: True
 
 db.search('color', 'blue')
-# Output: [{'name': 'Obi-Wan', 'color': 'blue'}]
+# Output: [{'name': 'John', 'color': 'blue'}]
 ```
 
 ## Overview/Usage
@@ -56,11 +52,11 @@ db = KenobiDB('example.db')
 Add a single document or multiple documents to the database.
 
 ```python
-db.insert({'name': 'Obi-Wan', 'color': 'blue'})
+db.insert({'name': 'Oden', 'color': 'blue'})
 
 db.insert_many([
-    {'name': 'Anakin', 'color': 'red'},
-    {'name': 'Yoda', 'color': 'green'}
+    {'name': 'Ryan', 'color': 'red'},
+    {'name': 'Tom', 'color': 'green'}
 ])
 ```
 
@@ -69,7 +65,7 @@ db.insert_many([
 Remove documents matching a specific key-value pair.
 
 ```python
-db.remove('name', 'Obi-Wan')
+db.remove('name', 'Oden')
 ```
 
 #### Update
@@ -77,7 +73,7 @@ db.remove('name', 'Obi-Wan')
 Update documents matching a specific key-value pair with new data.
 
 ```python
-db.update('name', 'Anakin', {'color': 'dark'})
+db.update('name', 'Ryan', {'color': 'dark'})
 ```
 
 #### Purge
@@ -168,3 +164,4 @@ Feel free to open issues or submit pull requests on the [GitHub repository](http
 ## Limitations
 
 KenobiDB is designed for small-scale applications and prototypes. While it provides excellent performance for most operations, it is not intended to replace full-fledged databases for high-scale or enterprise-level applications for that you should use MongoDB.
+
