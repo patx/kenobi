@@ -1,0 +1,80 @@
+[build-system]
+requires = [
+    "setuptools>=75.8.0",
+    "wheel",
+    "build",
+]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "kenobi"
+dynamic = [
+    "optional-dependencies",
+]
+version = "4.0"
+requires-python = ">=3.9"
+dependencies = []
+description = "document based database using sqlite"
+readme = "README.md"
+
+classifiers = [
+    "Environment :: Console",
+    "Development Status :: 3 - Alpha",
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: BSD License",
+    "Intended Audience :: Developers",
+    "Topic :: Database",
+]
+
+# https://peps.python.org/pep-0639/
+# https://clearlydefined.io/?sort=releaseDate&sortDesc=true&name=wreck
+# waiting for setuptools maintainers to implement metadata v2.4 support
+# https://github.com/pypa/setuptools/issues/4759
+license = {file = "LICENSE"}
+# license = "BSD-3-Clause"
+# license-files = [
+#     "LICEN[CS]E*",
+#     "NOTICE*",
+# ]
+
+authors = [
+    {name = "Harrison Erd", email = "harrisonerd@gmail.com"},
+]
+
+[project.urls]
+"Source code" = 'http://patx.github.io/kenobi'
+"Issue tracker" = 'http://patx.github.io/kenobi/issues'
+"PyPI Releases" = 'https://pypi.org/project/kenobi'
+
+[tool.setuptools.packages.find]
+where = ["src"]
+include = ["kenobi*"]
+
+[tool.setuptools.dynamic]
+optional-dependencies.pip = { file = ['requirements/pip.lock'] }
+optional-dependencies.dev = { file = ['requirements/dev.lock'] }
+optional-dependencies.manage = { file = ['requirements/manage.lock'] }
+
+[tool.pytest.ini_options]
+markers = [
+    "slow: marks tests as slow (deselect with '-m \"not slow\"')",
+]
+
+[tool.coverage.run]
+source_pkgs = ["kenobi"] # **REQUIRED** to be set correctly. Your package name
+branch = true
+
+[tool.coverage.report]
+exclude_lines = [
+    "pragma: no cover",
+    "@abc.abstractmethod",
+    "@abc.abstractproperty",
+    "if TYPE_CHECKING:",
+    "if typing.TYPE_CHECKING:",
+]
+precision = 2
+ignore_errors = true
+skip_covered = true
+skip_empty = true
+fail_under = 88
+show_missing = true

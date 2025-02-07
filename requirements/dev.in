@@ -1,0 +1,5 @@
+-c pins-validate-pyproject-pep639.in
+
+coverage
+pytest>=7.1
+validate-pyproject

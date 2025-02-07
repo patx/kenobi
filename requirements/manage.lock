@@ -1,0 +1,20 @@
+cfgv==3.4.0
+    # via pre-commit
+distlib==0.3.9
+    # via virtualenv
+filelock==3.17.0
+    # via virtualenv
+identify==2.6.6
+    # via pre-commit
+nodeenv==1.9.1
+    # via pre-commit
+platformdirs==4.3.6
+    # via virtualenv
+pre-commit==4.1.0
+    # via -r requirements/manage.in
+pyyaml==6.0.2
+    # via pre-commit
+virtualenv==20.29.1
+    # via
+    #   -c requirements/pins-virtualenv-cve-2024-53899.in
+    #   pre-commit

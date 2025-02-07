@@ -1,0 +1,12 @@
+include Makefile
+
+# missing .in and .unlock files
+recursive-include requirements *.in
+recursive-include requirements *.unlock
+recursive-include requirements *.lock
+
+# missing __init__.py conftest.py
+graft tests/
+
+# remove pyc cache folders
+prune tests/__pycache__/
