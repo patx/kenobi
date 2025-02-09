@@ -8,8 +8,7 @@
    Package exports
 
 """
+
 from .kenobi import KenobiDB
 
-__all__ = (
-    "KenobiDB",
-)
+__all__ = ("KenobiDB",)

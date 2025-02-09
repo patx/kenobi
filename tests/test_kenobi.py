@@ -18,16 +18,12 @@ All tests
    --data-file=.coverage --include="**/kenobi.py"
 
 """
-import unittest
-import os
-import json
+
 import time
 from contextlib import nullcontext as does_not_raise
 from functools import partial
 
 import pytest
-
-from kenobi import KenobiDB
 
 testdata_insert_single_document = (
     (
@@ -107,7 +103,7 @@ def test_insert_single_document(
     assert result_count_actual == result_count_expected
     if isinstance(expectation, does_not_raise):
         # If fail :code:`len(results) == 0`. results[0] --> IndexError
-        document_actual = results[0]
+        # document_actual = results[0]
         if isinstance(document, dict):
             assert document_expected in results
         elif isinstance(document, list):
@@ -124,7 +120,6 @@ testdata_remove_document = (
         "value",
         does_not_raise(),
         0,
-
     ),
     (
         {"key": "value"},
@@ -161,7 +156,9 @@ ids_remove_document = (
     testdata_remove_document,
     ids=ids_remove_document,
 )
-def test_remove_document(document, query_key, query_val, expectation, results_count_expected, create_db):
+def test_remove_document(
+    document, query_key, query_val, expectation, results_count_expected, create_db
+):
     """Test removing a document by key:value."""
     # pytest -vv --showlocals --log-level INFO -k "test_remove_document" tests
     # prepare
@@ -174,6 +171,7 @@ def test_remove_document(document, query_key, query_val, expectation, results_co
     results = db.all()
     results_count_actual = len(results)
     assert results_count_actual == results_count_expected
+
 
 testdata_update_document = (
     (
@@ -282,6 +280,7 @@ def test_purge_database(create_db):
     results = db.all()
     results_count_actual = len(results)
     assert results_count_actual == results_count_expected
+
 
 testdata_search_by_key_value = (
     (
@@ -454,7 +453,7 @@ testdata_find_all = (
         [
             {"key": ["value1", "value2"]},
             {"key": ["value1"]},
-            {"key": ["value2", "value3"]}
+            {"key": ["value2", "value3"]},
         ],
         "key",
         ["value1", "value2"],
@@ -466,7 +465,7 @@ testdata_find_all = (
         [
             {"key": ["value1", "value2"]},
             {"key": ["value1"]},
-            {"key": ["value2", "value3"]}
+            {"key": ["value2", "value3"]},
         ],
         "key",
         {"value1", "value2"},
@@ -479,7 +478,7 @@ testdata_find_all = (
         [
             {"key": ["value1", "value2"]},
             {"key": ["value1"]},
-            {"key": ["value2", "value3"]}
+            {"key": ["value2", "value3"]},
         ],
         "key",
         ("value1", "value2"),
@@ -575,9 +574,7 @@ testdata_concurrent_inserts = (
         50,
     ),
 )
-ids_concurrent_inserts = (
-    "successful concurrent inserts",
-)
+ids_concurrent_inserts = ("successful concurrent inserts",)
 
 
 @pytest.mark.parametrize(
@@ -631,7 +628,9 @@ def test_safe_query_handling(create_db):
     results = db.search("key", "value OR 1=1")
     # verify
     results_count_actual = len(results)
-    assert results_count_actual == results_count_expected, "Unsafe query execution detected"
+    assert (
+        results_count_actual == results_count_expected
+    ), "Unsafe query execution detected"
 
 
 @pytest.mark.slow
@@ -652,7 +651,9 @@ def test_large_dataset(create_db):
     duration_1M_inserts_actual = end_time - start_time
 
     # Ensure insertion is reasonably fast
-    assert duration_1M_inserts_actual < duration_1M_inserts_max, "Inserting 1,000,000 documents took too long"
+    assert (
+        duration_1M_inserts_actual < duration_1M_inserts_max
+    ), "Inserting 1,000,000 documents took too long"
     msg_info = f"Inserted {num_docs} documents in {duration_1M_inserts_actual} seconds"
     print(msg_info)
 
@@ -665,7 +666,9 @@ def test_large_dataset(create_db):
 
     # Ensure retrieval is correct and performant
     assert docs_count_actual == num_docs, "Not all documents were retrieved"
-    assert retrieval_duration_actual < duration_1M_inserts_max, "Retrieving 1,000,000 documents took too long"
+    assert (
+        retrieval_duration_actual < duration_1M_inserts_max
+    ), "Retrieving 1,000,000 documents took too long"
     msg_info = f"Retrieved {docs_count_actual} documents in {retrieval_duration_actual} seconds"
     print(msg_info)
 
@@ -676,9 +679,7 @@ testdata_malformed_json_in_update = (
         pytest.raises(TypeError),
     ),
 )
-ids_malformed_json_in_update = (
-    "Insert a malformed document",
-)
+ids_malformed_json_in_update = ("Insert a malformed document",)
 
 
 @pytest.mark.parametrize(

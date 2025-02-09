@@ -1,7 +1,19 @@
-import shutil
+"""
+.. moduleauthor:: Harrison Erd <harrisonerd@gmail.com>
 
+Database fixture and temp folder preparation fixtures
+
+.. py:data:: pytest_plugins
+   :type: list[str]
+   :value: []
+
+   pytest plugins to activate
+
+"""
+
+import shutil
 from collections.abc import Sequence
-from pathlib import Path, PurePath
+from pathlib import PurePath
 
 import pytest
 
@@ -64,6 +76,7 @@ def prepare_folders_files(request):
         for abspath_folder in set_folders:
             shutil.rmtree(abspath_folder, ignore_errors=True)
 
+
 @pytest.fixture()
 def db_path(tmp_path):
     """
@@ -73,6 +86,7 @@ def db_path(tmp_path):
     path_db = tmp_path.joinpath("test_kenobi.db")
 
     return path_db
+
 
 @pytest.fixture()
 def create_db(db_path, request):
@@ -113,7 +127,7 @@ def create_db(db_path, request):
         - open a REPR with :command:`python`
 
         """
-        
+
         return db
 
     request.addfinalizer(cleanup)
