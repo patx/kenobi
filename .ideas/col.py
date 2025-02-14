@@ -4,12 +4,13 @@
 KenobiDB is a small document-based DB, supporting simple usage including
 insertion, removal, and basic search, now extended to support collections.
 """
-import os
 import json
-import sqlite3
-from threading import RLock
-from concurrent.futures import ThreadPoolExecutor
+import os
 import re
+import sqlite3
+from concurrent.futures import ThreadPoolExecutor
+from threading import RLock
+
 
 class KenobiDB:
     """
@@ -63,8 +64,20 @@ class KenobiDB:
         """
         Add REGEXP function support to the SQLite connection.
         """
+
         def regexp(pattern, value):
+            """Code sqlite3 runs when REGEXP sql encountered. Takes two params.
+            inner function is untestable, a module level function is testable
+
+            Args:
+                pattern (str): regex
+                value (str): text blob the regex parses
+
+            Returns:
+                bool: True match occurred
+            """
             return re.search(pattern, value) is not None
+
         conn.create_function("REGEXP", 2, regexp)
 
     def insert(self, document, collection="default"):
@@ -85,7 +98,7 @@ class KenobiDB:
         with self._lock:
             self._connection.execute(
                 "INSERT INTO documents (data, collection) VALUES (?, ?)",
-                (json.dumps(document), collection)
+                (json.dumps(document), collection),
             )
             self._connection.commit()
             return True
@@ -101,9 +114,8 @@ class KenobiDB:
         Returns:
             bool: True upon successful insertion.
         """
-        if (
-            not isinstance(document_list, list)
-            or not all(isinstance(doc, dict) for doc in document_list)
+        if not isinstance(document_list, list) or not all(
+            isinstance(doc, dict) for doc in document_list
         ):
             raise TypeError("Must insert a list of dicts")
         if not isinstance(collection, str) or not collection:
@@ -111,7 +123,7 @@ class KenobiDB:
         with self._lock:
             self._connection.executemany(
                 "INSERT INTO documents (data, collection) VALUES (?, ?)",
-                [(json.dumps(doc), collection) for doc in document_list]
+                [(json.dumps(doc), collection) for doc in document_list],
             )
             self._connection.commit()
             return True
@@ -168,7 +180,9 @@ class KenobiDB:
             "LIMIT ? OFFSET ?"
         )
         with self._lock:
-            cursor = self._connection.execute(query, (key, value, collection, limit, offset))
+            cursor = self._connection.execute(
+                query, (key, value, collection, limit, offset)
+            )
             return [json.loads(row[0]) for row in cursor.fetchall()]
 
     def all(self, collection="default", limit=100, offset=0):
@@ -228,4 +242,3 @@ class KenobiDB:
         self.executor.shutdown()
         with self._lock:
             self._connection.close()
-

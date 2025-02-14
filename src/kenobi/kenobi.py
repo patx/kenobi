@@ -33,12 +33,13 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 POSSIBILITY OF SUCH DAMAGE.
 """
 
-import os
 import json
-import sqlite3
-from threading import RLock
-from concurrent.futures import ThreadPoolExecutor
+import os
 import re
+import sqlite3
+from concurrent.futures import ThreadPoolExecutor
+from threading import RLock
+
 
 class KenobiDB:
     """
@@ -70,18 +71,22 @@ class KenobiDB:
         journal mode to WAL.
         """
         with self._lock:
-            self._connection.execute("""
+            self._connection.execute(
+                """
                 CREATE TABLE IF NOT EXISTS documents (
                     id INTEGER PRIMARY KEY AUTOINCREMENT,
                     data TEXT NOT NULL
                 )
-            """)
-            self._connection.execute("""
+            """
+            )
+            self._connection.execute(
+                """
                 CREATE INDEX IF NOT EXISTS idx_key
                 ON documents (
                     json_extract(data, '$.key')
                 )
-            """)
+            """
+            )
             self._connection.execute("PRAGMA journal_mode=WAL;")
 
     @staticmethod
@@ -89,10 +94,21 @@ class KenobiDB:
         """
         Add REGEXP function support to the SQLite connection.
         """
+
         def regexp(pattern, value):
-            """Untestable. Separate into a module level private function
-            (precede function name with underscore)"""
+            """Code sqlite3 runs when REGEXP sql encountered. Takes two params.
+            inner function is untestable, a module level function is testable.
+            Precede module level function name with underscore
+
+            Args:
+                pattern (str): regex
+                value (str): text blob the regex parses
+
+            Returns:
+                bool: True match occurred
+            """
             return re.search(pattern, value) is not None
+
         conn.create_function("REGEXP", 2, regexp)
 
     def _get_connection(self):
@@ -118,8 +134,7 @@ class KenobiDB:
             raise TypeError("Must insert a dict")
         with self._lock:
             self._connection.execute(
-                "INSERT INTO documents (data) VALUES (?)",
-                (json.dumps(document),)
+                "INSERT INTO documents (data) VALUES (?)", (json.dumps(document),)
             )
             self._connection.commit()
             return True
@@ -137,15 +152,14 @@ class KenobiDB:
         Raises:
             TypeError: If the provided object is not a list of dicts.
         """
-        if (
-            not isinstance(document_list, list)
-            or not all(isinstance(doc, dict) for doc in document_list)
+        if not isinstance(document_list, list) or not all(
+            isinstance(doc, dict) for doc in document_list
         ):
             raise TypeError("Must insert a list of dicts")
         with self._lock:
             self._connection.executemany(
                 "INSERT INTO documents (data) VALUES (?)",
-                [(json.dumps(doc),) for doc in document_list]
+                [(json.dumps(doc),) for doc in document_list],
             )
             self._connection.commit()
             return True
@@ -168,10 +182,7 @@ class KenobiDB:
             raise ValueError("key must be a non-empty string")
         if value is None:
             raise ValueError("value cannot be None")
-        query = (
-            "DELETE FROM documents "
-            "WHERE json_extract(data, '$.' || ?) = ?"
-        )
+        query = "DELETE FROM documents " "WHERE json_extract(data, '$.' || ?) = ?"
         with self._lock:
             result = self._connection.execute(query, (key, value))
             self._connection.commit()
@@ -201,8 +212,7 @@ class KenobiDB:
             raise ValueError("id_value cannot be None")
 
         select_query = (
-            "SELECT data FROM documents "
-            "WHERE json_extract(data, '$.' || ?) = ?"
+            "SELECT data FROM documents " "WHERE json_extract(data, '$.' || ?) = ?"
         )
         update_query = (
             "UPDATE documents "
@@ -220,8 +230,7 @@ class KenobiDB:
                     continue
                 document.update(new_dict)
                 self._connection.execute(
-                    update_query,
-                    (json.dumps(document), id_key, id_value)
+                    update_query, (json.dumps(document), id_key, id_value)
                 )
             self._connection.commit()
             return True
@@ -379,4 +388,3 @@ class KenobiDB:
         self.executor.shutdown()
         with self._lock:
             self._connection.close()
-

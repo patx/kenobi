@@ -166,4 +166,3 @@ Feel free to open issues or submit pull requests on the [GitHub repository](http
 ## Limitations
 
 KenobiDB is designed for small-scale applications and prototypes. While it provides excellent performance for most operations, it is not intended to replace full-fledged databases for high-scale or enterprise-level applications for that you should use MongoDB.
-

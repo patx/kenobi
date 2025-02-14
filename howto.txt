@@ -1,0 +1,20 @@
+* Release checklist
+
+- Adjust coverage fail under minimal percentage
+  tox-test.ini
+  .github/workflows/coverage.yml
+  pyproject.toml [tool.coverage.report]
+  Makefile target, check
+- Run coverage ensure no failures. Does not run slow tests
+  $ make check
+- Run twice
+  $ make pre-commit
+- Remove old branches
+  $ git branch
+  $ git branch -D [branch name]
+- commit
+  $ git add .
+  $ git commit -S -m ""
+- tag a commit to trigger .github/workflows/release.yml
+  $ git tag -as -m "Version 4.0" 4.0
+  $ git push --follow-tags

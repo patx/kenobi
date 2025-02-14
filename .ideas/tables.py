@@ -32,12 +32,13 @@ https://patx.github.io/kenobi/
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
-import os
 import json
-import sqlite3
-from threading import RLock
-from concurrent.futures import ThreadPoolExecutor
+import os
 import re
+import sqlite3
+from concurrent.futures import ThreadPoolExecutor
+from threading import RLock
+
 
 class KenobiDB:
     """
@@ -65,8 +66,20 @@ class KenobiDB:
         """
         Add REGEXP function support to the SQLite connection.
         """
+
         def regexp(pattern, value):
+            """Code sqlite3 runs when REGEXP sql encountered. Takes two params.
+            inner function is untestable, a module level function is testable
+
+            Args:
+                pattern (str): regex
+                value (str): text blob the regex parses
+
+            Returns:
+                bool: True match occurred
+            """
             return re.search(pattern, value) is not None
+
         conn.create_function("REGEXP", 2, regexp)
 
     def table(self, name):
@@ -106,12 +119,14 @@ class KenobiDB:
         with self._lock:
             self._connection.close()
 
+
 class KenobiTable:
     """
     A class to represent and interact with a specific table within KenobiDB.
     """
 
     def __init__(self, db, name):
+        """Class constructor"""
         self.db = db
         self.name = name
         self._lock = db._lock
@@ -122,12 +137,14 @@ class KenobiTable:
         Create the table if it does not exist.
         """
         with self._lock:
-            self.db._connection.execute(f"""
+            self.db._connection.execute(
+                f"""
                 CREATE TABLE IF NOT EXISTS {self.name} (
                     id INTEGER PRIMARY KEY AUTOINCREMENT,
                     data TEXT NOT NULL
                 )
-            """)
+            """
+            )
 
     def insert(self, document):
         """
@@ -143,8 +160,7 @@ class KenobiTable:
             raise TypeError("Must insert a dict")
         with self._lock:
             self.db._connection.execute(
-                f"INSERT INTO {self.name} (data) VALUES (?)",
-                (json.dumps(document),)
+                f"INSERT INTO {self.name} (data) VALUES (?)", (json.dumps(document),)
             )
             self.db._connection.commit()
             return True
@@ -159,9 +175,7 @@ class KenobiTable:
         if not new_name or not isinstance(new_name, str):
             raise ValueError("New table name must be a non-empty string.")
         with self._lock:
-            self.db._connection.execute(
-                f"ALTER TABLE {self.name} RENAME TO {new_name}"
-            )
+            self.db._connection.execute(f"ALTER TABLE {self.name} RENAME TO {new_name}")
             self.name = new_name
 
     def drop(self):
@@ -227,10 +241,7 @@ class KenobiTable:
             raise ValueError("key must be a non-empty string")
         if value is None:
             raise ValueError("value cannot be None")
-        query = (
-            f"DELETE FROM {self.name} "
-            "WHERE json_extract(data, '$.' || ?) = ?"
-        )
+        query = f"DELETE FROM {self.name} " "WHERE json_extract(data, '$.' || ?) = ?"
         with self._lock:
             result = self.db._connection.execute(query, (key, value))
             self.db._connection.commit()
@@ -256,8 +267,7 @@ class KenobiTable:
             raise ValueError("id_value cannot be None")
 
         select_query = (
-            f"SELECT data FROM {self.name} "
-            "WHERE json_extract(data, '$.' || ?) = ?"
+            f"SELECT data FROM {self.name} " "WHERE json_extract(data, '$.' || ?) = ?"
         )
         update_query = (
             f"UPDATE {self.name} "
@@ -275,9 +285,7 @@ class KenobiTable:
                     continue
                 document.update(new_dict)
                 self.db._connection.execute(
-                    update_query,
-                    (json.dumps(document), id_key, id_value)
+                    update_query, (json.dumps(document), id_key, id_value)
                 )
             self.db._connection.commit()
             return True
-
